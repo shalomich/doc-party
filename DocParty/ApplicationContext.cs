@@ -16,6 +16,8 @@ namespace DocParty
     {
         public DbSet<Project> Projects { set; get; }
         public DbSet<ProjectSnapshot> ProjectShapshots { set; get; }
+        public DbSet<ProjectSnapshot> Comments { set; get; }
+
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -27,6 +29,7 @@ namespace DocParty
 
             modelBuilder.ApplyConfiguration(new ProjectDbConfig());
             modelBuilder.ApplyConfiguration(new ProjectSnapshotDbConfig());
+            modelBuilder.ApplyConfiguration(new CommentDbConfig());
         }
     }
 }
