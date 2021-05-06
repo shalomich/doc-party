@@ -15,6 +15,8 @@ namespace DocParty
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DbSet<Project> Projects { set; get; }
+        public DbSet<ProjectSnapshot> ProjectShapshots { set; get; }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
         }
@@ -24,6 +26,7 @@ namespace DocParty
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new ProjectDbConfig());
+            modelBuilder.ApplyConfiguration(new ProjectSnapshotDbConfig());
         }
     }
 }
