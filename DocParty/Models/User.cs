@@ -7,6 +7,7 @@ namespace DocParty.Models
 {
     class User : IEntity
     {
-        public int Id { get; set; }
+        public int Id { set; get; }
+        public IEnumerable<Project> Projects { set; get; }
     }
 }
