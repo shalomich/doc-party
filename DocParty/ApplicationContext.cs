@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DocParty.DatabaseConfigs;
 
 namespace DocParty
 {
@@ -13,8 +14,16 @@ namespace DocParty
         IdentityUserClaim<int>, ProjectUserRole, IdentityUserLogin<int>,
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
+        public DbSet<Project> Projects { set; get; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfiguration(new ProjectDbConfig());
         }
     }
 }
