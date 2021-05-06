@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class Project : IEntity
+    class ProjectSnapshot : IEntity
     {
         private static readonly string MaxNameLengthMessage = $"{nameof(Name)} length can be not more than {MaxNameLength}";
         private static readonly string EmptyNameMessage = $"{nameof(Name)} is empty";
@@ -29,8 +29,14 @@ namespace DocParty.Models
                 return _name;
             }
         }
-        public bool isActive { set; get; } = true;
-        public User Creator { set; get; }
-        public IEnumerable<ProjectSnapshot> Snapshots { set; get; }
+
+        public string Description { set; get; }
+
+        public Project Project { set; get; }
+        public int ProjectId { set; get; }
+
+        public User Author { set; get; }
+        
+        IEnumerable<Comment> Comments { set; get; }
     }
 }
