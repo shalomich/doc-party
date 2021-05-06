@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class User : IdentityUser<int>, IEntity
+    class ProjectUserRole : IdentityUserRole<int>
     {
-        public override int Id { set; get; }
-        public IEnumerable<Project> Projects { set; get; }
+        public Project Project { set; get; }
     }
 }
