@@ -1,5 +1,5 @@
-﻿using DocParty.Handlers.Account.Login;
-using DocParty.Handlers.Account.Register;
+﻿using DocParty.RequestHandlers.Account.Login;
+using DocParty.RequestHandlers.Account.Register;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.Logout;
 using MediatR;
@@ -26,22 +26,52 @@ namespace DocParty.Controllers
         {
             return Content($"{User.Identity.Name} is authorized");
         }
-
+ 
         public IActionResult Login()
         {
-            return Content($"Need to authorize");
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginQuery request)
+        public async Task<IActionResult> LoginAsync([FromForm] LoginQuery loginRequest)
         {
-            return await AuthRequestHandle(request);
+            if (ModelState.IsValid)
+            {
+                ErrorResponce loginResponce = await _mediator.Send(loginRequest);
+
+                if (loginResponce.Errors.Any() == false)
+                    return RedirectToAction(nameof(Index));
+                else
+                {
+                    foreach (string message in loginResponce.Errors)
+                        ModelState.AddModelError("", message);
+                }
+            }
+
+            return View(loginRequest);
+        }
+
+        public IActionResult Register()
+        {
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegistrationCommand request)
+        public async Task<IActionResult> RegisterAsync([FromForm] RegistrationCommand registerRequest)
         {
-            return await AuthRequestHandle(request);
+            if (ModelState.IsValid)
+            {
+                ErrorResponce registerResponce = await _mediator.Send(registerRequest);
+
+                if (registerResponce.Errors.Any() == false)
+                    return RedirectToAction(nameof(Index));
+                else
+                {
+                    foreach (string message in registerResponce.Errors)
+                        ModelState.AddModelError("", message);
+                }
+            }
+            return View(registerRequest);
         }
 
         [HttpPost]
@@ -49,24 +79,6 @@ namespace DocParty.Controllers
         {
             await _mediator.Send(new LogoutQuery());
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<IActionResult> AuthRequestHandle(IRequest<ErrorResponce> request)
-        {
-            if (ModelState.IsValid)
-            {
-                ErrorResponce responce = await _mediator.Send(request);
-
-                if (responce.Errors.Any() == false)
-                    return RedirectToAction(nameof(Index));
-                else
-                {
-                    foreach (string message in responce.Errors)
-                        ModelState.AddModelError("", message);
-                }
-            }
-
-            return new JsonResult(ModelState);
         }
     }
 }
