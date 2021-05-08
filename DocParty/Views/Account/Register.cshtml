@@ -1,0 +1,25 @@
+﻿@model DocParty.RequestHandlers.Account.Register.RegistrationCommand
+
+@{
+    Layout = "_Layout";
+}
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+    <p>
+        @Html.LabelFor(registration => registration.UserName)<br />
+        @Html.EditorFor(registration => registration.UserName)
+    </p>
+    <p>
+        @Html.LabelFor(registration => registration.Email)<br />
+        @Html.EditorFor(registration => registration.Email)
+    </p>
+    <p>
+        @Html.LabelFor(registration => registration.Password)<br />
+        @Html.EditorFor(registration => registration.Password)
+    </p>
+    <p>
+        <input type="submit" value="Registration" />
+    </p>
+}

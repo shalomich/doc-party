@@ -1,0 +1,23 @@
+﻿@model DocParty.RequestHandlers.Account.Login.LoginQuery
+
+@{
+    Layout = "_Layout";
+}
+
+@using (Html.BeginForm("Login", "Account", FormMethod.Post))
+{
+    @Html.ValidationSummary(true)
+    @Html.ValidationSummary(false)
+    <p>
+        @Html.LabelFor(login => login.Email)<br />
+        @Html.EditorFor(login => login.Email)
+    </p>
+    <p>
+        @Html.LabelFor(login => login.Password)<br />
+        @Html.EditorFor(login => login.Password)
+    </p>
+    <p>
+        <input type="submit" value="Login" />
+    </p>
+    @Html.ActionLink("Registration", "Register")
+}
