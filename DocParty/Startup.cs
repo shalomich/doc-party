@@ -11,11 +11,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DocParty
 {
     public class Startup
     {
+        private const string AuthUrlConfigPath = "Locations:Authentication";
         private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -28,8 +31,18 @@ namespace DocParty
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole<int>>()
+            services.AddIdentity<User, IdentityRole<int>>(options => options.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<ApplicationContext>();
+            
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.LoginPath = Configuration[AuthUrlConfigPath];
+            });
+
+            services.AddControllersWithViews();
+            
+            services.AddMediatR(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,12 +54,12 @@ namespace DocParty
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
