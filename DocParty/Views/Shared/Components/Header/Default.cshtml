@@ -1,0 +1,32 @@
+﻿@model HeaderInfo
+
+<style>
+    .text {
+        font-size:24px;
+    }
+
+    .header-item {
+        margin-left:20px;
+        margin-right:20px;
+    }
+    
+</style>
+
+<header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="header-item text">DocParty</div>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link header-item" href=@Model.ProjectsUrl>Projects</a>
+                <a class="nav-item nav-link header-item" href=@Model.ProjectSnapshotsUrl>ProjectSnapshots</a>
+            </div>
+            <div class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <a class="nav-item nav-link header-item" href="/account/logout">Sign out</a>
+            </div>
+        </div>
+        <div class="header-item text"> @Model.UserName</div>
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+</header> 
