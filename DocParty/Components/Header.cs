@@ -10,6 +10,7 @@ namespace DocParty.Components
 {
     public class Header : ViewComponent
     {
+        public const string UserProfileUrl = "/{0}";
         public const string UserProjectsUrl = "/{0}/projects";
         public const string UserProjectSnapshotsUrl = "/{0}/shapshots";
         
@@ -20,10 +21,11 @@ namespace DocParty.Components
             var info = new HeaderInfo
             {
                 UserName = userName,
+                UserProfileUrl = String.Format(UserProfileUrl, userName),
                 ProjectsUrl = String.Format(UserProjectsUrl, userName),
                 ProjectSnapshotsUrl = String.Format(UserProjectSnapshotsUrl, userName)
             };
-            
+
             return View(info);
         }
     }

@@ -8,6 +8,7 @@ namespace DocParty.ViewModel
     public class HeaderInfo
     {
         public string UserName { set; get; }
+        public string UserProfileUrl { set; get; }
         public string ProjectsUrl { set; get; }
         public string ProjectSnapshotsUrl { set; get; }
 
