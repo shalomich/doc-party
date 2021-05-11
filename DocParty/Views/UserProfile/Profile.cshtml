@@ -1,0 +1,32 @@
+﻿@model DocParty.RequestHandlers.UserProfile.UserStatistics
+
+@{ 
+    Layout = "AppLayout";
+}
+
+<style>
+    .text {
+        font-size: 18px;   
+    }
+
+    .value {
+        text-align: right
+    }
+
+</style>
+
+<div class="container">
+    
+    <div class="row">
+        @foreach ((string metricName, int metricValue) in Model.Data)
+        {
+            <div class="col-6">
+                <div class="row">
+                    <div class="col text">@metricName</div>
+                    <div class="col text value">@metricValue</div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
