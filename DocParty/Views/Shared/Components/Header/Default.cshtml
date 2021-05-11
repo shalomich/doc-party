@@ -22,9 +22,10 @@
             </div>
             <div class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <a class="nav-item nav-link header-item" href="/account/logout">Sign out</a>
+                <a class="nav-item nav-link header-item" href=@Model.UserProfileUrl > @Model.UserName</a>
             </div>
         </div>
-        <div class="header-item text"> @Model.UserName</div>
+        
         <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
