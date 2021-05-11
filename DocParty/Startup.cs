@@ -60,6 +60,7 @@ namespace DocParty
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }
