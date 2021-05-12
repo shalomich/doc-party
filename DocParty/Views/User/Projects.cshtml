@@ -1,0 +1,10 @@
+﻿@addTagHelper *, DocParty
+@using DocParty.ViewModel;
+@model ProjectsInfo
+
+@{ 
+    Layout = "AppLayout";
+}
+<div class="container">
+    <vc:project-data-table info=@Model />
+</div>
