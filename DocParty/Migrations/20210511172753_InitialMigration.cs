@@ -138,7 +138,7 @@ namespace DocParty.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     isActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatorId = table.Column<int>(type: "int", nullable: true)
+                    CreatorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -148,7 +148,7 @@ namespace DocParty.Migrations
                         column: x => x.CreatorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -300,8 +300,7 @@ namespace DocParty.Migrations
                 name: "IX_Projects_Name_CreatorId",
                 table: "Projects",
                 columns: new[] { "Name", "CreatorId" },
-                unique: true,
-                filter: "[CreatorId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectSnapshots_AuthorId",

@@ -52,7 +52,7 @@ namespace DocParty.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("CreatorId")
+                    b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -70,8 +70,7 @@ namespace DocParty.Migrations
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("Name", "CreatorId")
-                        .IsUnique()
-                        .HasFilter("[CreatorId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Projects");
                 });
@@ -109,24 +108,33 @@ namespace DocParty.Migrations
                     b.ToTable("ProjectSnapshots");
                 });
 
-            modelBuilder.Entity("DocParty.Models.ProjectUserRole", b =>
+            modelBuilder.Entity("DocParty.Models.Role", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.HasIndex("ProjectId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetUserRoles");
+                    b.ToTable("AspNetRoles");
                 });
 
             modelBuilder.Entity("DocParty.Models.User", b =>
@@ -196,33 +204,24 @@ namespace DocParty.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+            modelBuilder.Entity("DocParty.Models.UserProjectRole", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.HasKey("UserId", "RoleId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("ProjectId");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("AspNetUserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -318,7 +317,7 @@ namespace DocParty.Migrations
                         .HasForeignKey("AuthorId");
 
                     b.HasOne("DocParty.Models.ProjectSnapshot", "ProjectSnapshot")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("ProjectSnapshotId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -332,7 +331,9 @@ namespace DocParty.Migrations
                 {
                     b.HasOne("DocParty.Models.User", "Creator")
                         .WithMany("Projects")
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Creator");
                 });
@@ -354,30 +355,34 @@ namespace DocParty.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("DocParty.Models.ProjectUserRole", b =>
+            modelBuilder.Entity("DocParty.Models.UserProjectRole", b =>
                 {
                     b.HasOne("DocParty.Models.Project", "Project")
-                        .WithMany()
+                        .WithMany("Authors")
                         .HasForeignKey("ProjectId");
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
-                        .WithMany()
+                    b.HasOne("DocParty.Models.Role", "Role")
+                        .WithMany("ProjectRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DocParty.Models.User", null)
-                        .WithMany()
+                    b.HasOne("DocParty.Models.User", "User")
+                        .WithMany("ProjectRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Project");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("DocParty.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -413,11 +418,25 @@ namespace DocParty.Migrations
 
             modelBuilder.Entity("DocParty.Models.Project", b =>
                 {
+                    b.Navigation("Authors");
+
                     b.Navigation("Snapshots");
+                });
+
+            modelBuilder.Entity("DocParty.Models.ProjectSnapshot", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("DocParty.Models.Role", b =>
+                {
+                    b.Navigation("ProjectRoles");
                 });
 
             modelBuilder.Entity("DocParty.Models.User", b =>
                 {
+                    b.Navigation("ProjectRoles");
+
                     b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618

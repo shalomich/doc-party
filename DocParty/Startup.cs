@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using DocParty.Services;
+using DocParty.RequestHandlers.Projects;
 
 namespace DocParty
 {
@@ -31,7 +33,7 @@ namespace DocParty
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole<int>>(options => options.User.RequireUniqueEmail = true)
+            services.AddIdentity<User, Role>(options => options.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<ApplicationContext>();
             
             services.ConfigureApplicationCookie(options =>
@@ -43,6 +45,7 @@ namespace DocParty
             services.AddControllersWithViews();
             
             services.AddMediatR(typeof(Startup));
+            services.AddTransient(typeof(Table<>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
