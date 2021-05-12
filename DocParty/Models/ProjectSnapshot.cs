@@ -36,7 +36,6 @@ namespace DocParty.Models
         public int ProjectId { set; get; }
 
         public User Author { set; get; }
-        
-        IEnumerable<Comment> Comments { set; get; }
+        public IEnumerable<Comment> Comments { set; get; }
     }
 }

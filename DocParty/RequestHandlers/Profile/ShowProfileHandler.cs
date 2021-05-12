@@ -8,35 +8,35 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DocParty.RequestHandlers.UserProfile
+namespace DocParty.RequestHandlers.Profile
 {
-    class ProfileHandler : IRequestHandler<UserQuery, UserStatistics>
+    class ShowProfileHandler : IRequestHandler<UserQuery<UserProfile>, UserProfile>
     {
         private readonly IReadOnlyDictionary<string, Func<User, int>> MetricFunctions = new Dictionary<string, Func<User, int>>()
         {
             {"All project's count", user => user.Projects.Count()},
             {"All project snapshots'count", user => user.Projects.Select(project => project.Snapshots.Count()).Sum()},
-            {"Projects's count in creator role", user => user.Projects.Where(project => project.CreatorId == user.Id).Count() },
-            {"Projects's count in author role", user => user.Projects.Where(project => project.CreatorId != user.Id).Count() },
+            {"ProjectRoles's count in creator role", user => user.Projects.Where(project => project.CreatorId == user.Id).Count() },
+            {"ProjectRoles's count in author role", user => user.Projects.Where(project => project.CreatorId != user.Id).Count() },
             {"Closed project' count", user => user.Projects.Where(project => project.isActive == false).Count() }
         };
         private ApplicationContext Context { get; }
 
-        public ProfileHandler(ApplicationContext context)
+        public ShowProfileHandler(ApplicationContext context)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<UserStatistics> Handle(UserQuery request, CancellationToken cancellationToken)
+        public async Task<UserProfile> Handle(UserQuery<UserProfile> request, CancellationToken cancellationToken)
         {
             User user = await Context.Users
                                     .Include(user => user.Projects)
                                     .ThenInclude(project => project.Snapshots)
                                     .FirstOrDefaultAsync(user => user.UserName == request.UserName);
 
-            return new UserStatistics
+            return new UserProfile
             {
-                Data = MetricFunctions.Select(metric => (metric.Key, metric.Value(user))).ToList()
+                Statistics = MetricFunctions.ToDictionary(metric => metric.Key, metric => metric.Value(user))
             };
         }
     }

@@ -31,7 +31,8 @@ namespace DocParty.Models
         }
         public bool isActive { set; get; } = true;
         public User Creator { set; get; }
-        public int? CreatorId { set; get; }
+        public int CreatorId { set; get; }
+        public IEnumerable<UserProjectRole> AuthorRoles { set; get; }
         public IEnumerable<ProjectSnapshot> Snapshots { set; get; }
     }
 }

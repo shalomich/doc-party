@@ -10,8 +10,8 @@ using DocParty.DatabaseConfigs;
 
 namespace DocParty
 {
-    class ApplicationContext : IdentityDbContext<User, IdentityRole<int>, int,
-        IdentityUserClaim<int>, ProjectUserRole, IdentityUserLogin<int>,
+    class ApplicationContext : IdentityDbContext<User, Role, int,
+        IdentityUserClaim<int>, UserProjectRole, IdentityUserLogin<int>,
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DbSet<Project> Projects { set; get; }
@@ -30,6 +30,23 @@ namespace DocParty
             modelBuilder.ApplyConfiguration(new ProjectDbConfig());
             modelBuilder.ApplyConfiguration(new ProjectSnapshotDbConfig());
             modelBuilder.ApplyConfiguration(new CommentDbConfig());
+
+            
+            modelBuilder.Entity<User>(
+                user => user
+                    .HasMany(user => user.ProjectRoles)
+                    .WithOne(projetRole => projetRole.User)
+                    .HasForeignKey(projectRole => projectRole.UserId)
+                    .IsRequired()
+            );
+
+            modelBuilder.Entity<Role>( 
+                role => role
+                    .HasMany(role => role.ProjectRoles)
+                    .WithOne(projectRole => projectRole.Role)
+                    .HasForeignKey(projectRole => projectRole.RoleId)
+                    .IsRequired()
+            );
         }
     }
 }

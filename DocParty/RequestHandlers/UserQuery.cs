@@ -1,4 +1,5 @@
-﻿using DocParty.RequestHandlers.UserProfile;
+﻿
+using DocParty.RequestHandlers.Profile;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers
 {
-    public class UserQuery : IRequest<UserStatistics>
+    public class UserQuery<T> : IRequest<T>
     {
         public string UserName { set; get; }
     }
