@@ -1,0 +1,43 @@
+﻿@using DocParty.ViewModel;
+@model ProjectDataTableInfo;
+
+@{ 
+    int counter = 0;
+    string[] columnNames = Model.Table.ColumnNames;
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Number</th>
+            @foreach (var columnName in columnNames)
+            {
+                <th scope="col">@columnName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model.Table.GetRows())
+        {
+            ++counter;
+            <tr>
+                <th scope="row">@counter</th>
+                @for (int i = 0; i < columnNames.Length; i++)
+                {
+                    if (columnNames[i] == "ProjectName")
+                    {
+                        string projectName = row[i];
+                        string link = Model.ProjectsLocations[projectName];
+                        
+                        <td>
+                            <a href=@link>@projectName</a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>@row[i]</td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
