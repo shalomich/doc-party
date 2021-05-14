@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers
 {
-    class ErrorResponce
+    public class ErrorResponce
     {
         public IEnumerable<string> Errors { set; get; }
 

@@ -64,6 +64,8 @@ namespace DocParty
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("projects", "{userName}/projects");
+                endpoints.MapControllerRoute("user", "{userName}");
             });
         }
     }

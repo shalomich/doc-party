@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.Projects
 {
-    class ShowProjectsHandler : IRequestHandler<UserQuery<IEnumerable<ProjectData>>,IEnumerable<ProjectData>>
+    class ShowProjectsHandler : IRequestHandler<HandlerData<UserRequest,IEnumerable<ProjectData>>,IEnumerable<ProjectData>>
     {
         private ApplicationContext Context { get; }
 
@@ -18,10 +18,11 @@ namespace DocParty.RequestHandlers.Projects
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<IEnumerable<ProjectData>> Handle(UserQuery<IEnumerable<ProjectData>> request, CancellationToken cancellationToken)
+        
+        public async Task<IEnumerable<ProjectData>> Handle(HandlerData<UserRequest, IEnumerable<ProjectData>> request, CancellationToken cancellationToken)
         {
             return await Context.Projects
-                                   .Where(project => project.AuthorRoles.Any(authorRole => authorRole.User.UserName == request.UserName))
+                                   .Where(project => project.AuthorRoles.Any(authorRole => authorRole.User.UserName == request.Data.UserName))
                                    .Select(project => new ProjectData
                                    {
                                        ProjectName = project.Name,
