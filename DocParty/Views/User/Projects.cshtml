@@ -6,5 +6,6 @@
     Layout = "AppLayout";
 }
 <div class="container">
-    <vc:project-data-table info=@Model />
+   @await Html.PartialAsync("ProjectAddingForm");
+   <vc:project-data-table info=@Model />
 </div>

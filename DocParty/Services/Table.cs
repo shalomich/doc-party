@@ -23,7 +23,7 @@ namespace DocParty.Services
             {
                 _values[i] = new string[_columnNames.Length];
                 for (int j = 0; j < _columnNames.Length; j++)
-                    _values[i][j] = typeof(T).GetProperty(_columnNames[i]).GetValue(item).ToString();
+                    _values[i][j] = typeof(T).GetProperty(_columnNames[j]).GetValue(item).ToString();
                 i++;
             }
         }
