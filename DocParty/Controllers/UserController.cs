@@ -1,5 +1,6 @@
 ﻿
 using DocParty.RequestHandlers;
+using DocParty.RequestHandlers.AddProject;
 using DocParty.RequestHandlers.Profile;
 using DocParty.RequestHandlers.Projects;
 using DocParty.ViewModel;
@@ -15,6 +16,7 @@ namespace DocParty.Controllers
 {
     
     [Authorize]
+    [Route("{userName}")]
     public class UserController : Controller
     {
         private readonly IMediator _mediator;
@@ -23,24 +25,44 @@ namespace DocParty.Controllers
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
-
-        [Route("{userName}")]
-        public async Task<IActionResult> ShowProfile([FromRoute] UserQuery<UserProfile> query)
+  
+        public async Task<IActionResult> ShowProfile([FromRoute] string userName)
         {
-            UserProfile statistics = await _mediator.Send(query);
-
+            var request = new HandlerData<UserRequest, UserProfile> { Data = new UserRequest { UserName = userName } };
+            
+            UserProfile statistics = await _mediator.Send(request);
+            
             return View("Profile", statistics);
         }
 
-        [Route("{userName}/projects")]
-        public async Task<IActionResult> ShowProjects([FromRoute] UserQuery<IEnumerable<ProjectData>> query)
+        [Route("projects")]
+        public async Task<IActionResult> ShowProjects([FromRoute] string userName)
         {
-            IEnumerable<ProjectData> data = await _mediator.Send(query);
+            var request = new HandlerData<UserRequest, IEnumerable<ProjectData>> { Data = new UserRequest { UserName = userName } };
 
-            return View("Projects", new ProjectsInfo { Data = data, UserName = query.UserName});
+            IEnumerable<ProjectData> data = await _mediator.Send(request);
+
+            return View("Projects", new ProjectsInfo { Data = data, UserName = userName});
         }
 
-        
-        
+        [HttpPost]
+        [Route("projects")]
+        public async Task<IActionResult> AddProject([FromRoute] string userName, [FromForm] AddingFormData data)
+        {
+            var request = new UserHandlerData<AddingFormData, ErrorResponce>
+            {
+                UserRequest = new UserRequest { UserName = userName },
+                Data = data
+            };
+
+            ErrorResponce responce = await _mediator.Send(request);
+
+            return RedirectToRoute("projects",new { userName = userName});
+        }
+
+
+
+
+
     }
 }
