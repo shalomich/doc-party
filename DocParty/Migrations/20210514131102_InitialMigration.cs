@@ -138,7 +138,7 @@ namespace DocParty.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     isActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatorId = table.Column<int>(type: "int", nullable: false)
+                    CreatorId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -148,7 +148,7 @@ namespace DocParty.Migrations
                         column: x => x.CreatorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,7 +157,7 @@ namespace DocParty.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
-                    ProjectId = table.Column<int>(type: "int", nullable: true)
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -179,7 +179,7 @@ namespace DocParty.Migrations
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -300,7 +300,8 @@ namespace DocParty.Migrations
                 name: "IX_Projects_Name_CreatorId",
                 table: "Projects",
                 columns: new[] { "Name", "CreatorId" },
-                unique: true);
+                unique: true,
+                filter: "[CreatorId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectSnapshots_AuthorId",

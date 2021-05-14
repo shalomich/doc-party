@@ -8,6 +8,11 @@ namespace DocParty.Models
 {
     class Role : IdentityRole<int>
     {
+        public enum Value
+        {
+            Creator,
+            Author
+        }
         public IEnumerable<UserProjectRole> ProjectRoles { set; get; }
     }
 }
