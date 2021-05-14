@@ -13,6 +13,33 @@ namespace DocParty.Models
         public const int MaxNameLength = 30;
 
         private string _name;
+
+        public Project()
+        {
+
+        }
+        public Project(string projectName, string description, User creator)
+        {
+            Name = projectName;
+            Creator = creator;
+
+            var initialSnapshot = new ProjectSnapshot
+            {
+                Name = projectName,
+                Description = description,
+                Author = creator
+            };
+
+            Snapshots = new List<ProjectSnapshot>() { initialSnapshot };
+
+            var creatorRole = new UserProjectRole
+            {
+                Role = new Role { Name = Role.Value.Creator.ToString() },
+                User = creator
+            };
+
+            AuthorRoles = new List<UserProjectRole>() { creatorRole };
+        }
         public int Id { set; get; }
         public string Name
         {
@@ -31,8 +58,10 @@ namespace DocParty.Models
         }
         public bool isActive { set; get; } = true;
         public User Creator { set; get; }
-        public int CreatorId { set; get; }
+        public int? CreatorId { set; get; }
         public IEnumerable<UserProjectRole> AuthorRoles { set; get; }
         public IEnumerable<ProjectSnapshot> Snapshots { set; get; }
+
+        
     }
 }

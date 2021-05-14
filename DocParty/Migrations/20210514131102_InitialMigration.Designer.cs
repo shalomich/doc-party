@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DocParty.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20210511172753_InitialMigration")]
+    [Migration("20210514131102_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace DocParty.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -72,7 +72,8 @@ namespace DocParty.Migrations
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("Name", "CreatorId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[CreatorId] IS NOT NULL");
 
                     b.ToTable("Projects");
                 });
@@ -214,7 +215,7 @@ namespace DocParty.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProjectId")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
@@ -333,9 +334,7 @@ namespace DocParty.Migrations
                 {
                     b.HasOne("DocParty.Models.User", "Creator")
                         .WithMany("Projects")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.Navigation("Creator");
                 });
@@ -360,8 +359,10 @@ namespace DocParty.Migrations
             modelBuilder.Entity("DocParty.Models.UserProjectRole", b =>
                 {
                     b.HasOne("DocParty.Models.Project", "Project")
-                        .WithMany("Authors")
-                        .HasForeignKey("ProjectId");
+                        .WithMany("AuthorRoles")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DocParty.Models.Role", "Role")
                         .WithMany("ProjectRoles")
@@ -420,7 +421,7 @@ namespace DocParty.Migrations
 
             modelBuilder.Entity("DocParty.Models.Project", b =>
                 {
-                    b.Navigation("Authors");
+                    b.Navigation("AuthorRoles");
 
                     b.Navigation("Snapshots");
                 });
