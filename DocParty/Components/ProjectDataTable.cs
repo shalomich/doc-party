@@ -12,7 +12,7 @@ namespace DocParty.Components
 {
     public class ProjectDataTable : ViewComponent
     {
-        private const string ProjectLocation = "{userName}/{projectName}";
+        private const string ProjectLocation = "/{0}/{1}";
         
         private readonly Table<ProjectData> _table;
 

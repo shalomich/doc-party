@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers
 {
-    public class UserQuery<T> : IRequest<T>
+    public class UserRequest
     {
         public string UserName { set; get; }
     }

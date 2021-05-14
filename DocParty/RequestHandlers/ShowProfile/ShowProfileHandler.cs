@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.Profile
 {
-    class ShowProfileHandler : IRequestHandler<UserQuery<UserProfile>, UserProfile>
+    class ShowProfileHandler : IRequestHandler<HandlerData<UserRequest,UserProfile>, UserProfile>
     {
         private readonly IReadOnlyDictionary<string, Func<User, int>> MetricFunctions = new Dictionary<string, Func<User, int>>()
         {
@@ -27,12 +27,14 @@ namespace DocParty.RequestHandlers.Profile
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<UserProfile> Handle(UserQuery<UserProfile> request, CancellationToken cancellationToken)
+        
+
+        public async Task<UserProfile> Handle(HandlerData<UserRequest, UserProfile> request, CancellationToken cancellationToken)
         {
             User user = await Context.Users
                                     .Include(user => user.Projects)
                                     .ThenInclude(project => project.Snapshots)
-                                    .FirstOrDefaultAsync(user => user.UserName == request.UserName);
+                                    .FirstOrDefaultAsync(user => user.UserName == request.Data.UserName);
 
             return new UserProfile
             {
