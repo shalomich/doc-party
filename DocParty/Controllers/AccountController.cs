@@ -24,7 +24,7 @@ namespace DocParty.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            return Content($"{User.Identity.Name} is authorized");
+            return RedirectToRoute("user", new { userName = User.Identity.Name});
         }
  
         public IActionResult Login()
@@ -38,7 +38,6 @@ namespace DocParty.Controllers
             if (ModelState.IsValid)
             {
                 ErrorResponce loginResponce = await _mediator.Send(loginRequest);
-
                 if (loginResponce.Errors.Any() == false)
                     return RedirectToAction(nameof(Index));
                 else
@@ -64,7 +63,7 @@ namespace DocParty.Controllers
                 ErrorResponce registerResponce = await _mediator.Send(registerRequest);
 
                 if (registerResponce.Errors.Any() == false)
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToRoute("user",new { userName = registerRequest.UserName });
                 else
                 {
                     foreach (string message in registerResponce.Errors)
@@ -74,11 +73,10 @@ namespace DocParty.Controllers
             return View(registerRequest);
         }
 
-        [HttpPost]
         public async Task<IActionResult> LogoutAsync()
         {
             await _mediator.Send(new LogoutQuery());
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Login));
         }
     }
 }
