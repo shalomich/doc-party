@@ -18,26 +18,37 @@
     <tbody>
         @foreach (var row in Model.Table.GetRows())
         {
+            string link = null;
             ++counter;
-            <tr>
-                <th scope="row">@counter</th>
-                @for (int i = 0; i < columnNames.Length; i++)
+        <tr>
+            <th scope="row">@counter</th>
+            @for (int i = 0; i < columnNames.Length; i++)
+            {
+                if (columnNames[i] == "ProjectName")
                 {
-                    if (columnNames[i] == "ProjectName")
-                    {
-                        string projectName = row[i];
-                        string link = Model.ProjectsLocations[projectName];
-                        
-                        <td>
-                            <a href=@link>@projectName</a>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>@row[i]</td>
-                    }
+                    string projectName = row[i];
+                    link = Model.ProjectsLocations[projectName];
+
+                    <td>
+                        <a href=@link>@projectName</a>
+                    </td>
                 }
-            </tr>
+                else
+                {
+                    <td>@row[i]</td>
+                }
+            }
+            @{ 
+                string deletionLink = $"{link}/deletion";
+            }
+            <td>
+                <form action=@deletionLink method="post">
+                    <button type="submit" class="close btn btn-primary btn-sm" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </form>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
