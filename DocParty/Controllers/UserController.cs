@@ -4,6 +4,7 @@ using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.AddProject;
 using DocParty.RequestHandlers.Profile;
 using DocParty.RequestHandlers.Projects;
+using DocParty.RequestHandlers.ShowSnapshots;
 using DocParty.Services.Tables;
 using DocParty.ViewModel;
 using MediatR;
@@ -68,10 +69,20 @@ namespace DocParty.Controllers
 
             ErrorResponce responce = await _mediator.Send(request);
 
-            return RedirectToRoute("projects",new { userName = userName});
+            return RedirectToRoute("Projects",new { userName = userName});
         }
 
+        [Route("shapshots")]
+        public async Task<IActionResult> ShowShapshots([FromRoute] string userName)
+        {
+            var request = new HandlerData<UserRequest, IEnumerable<SnapshotData>> { Data = new UserRequest { UserName = userName } };
 
+            IEnumerable<SnapshotData> data = await _mediator.Send(request);
+
+            var table = new NumberedTable(new ObjectTable<SnapshotData>(data));
+
+            return View("SnapshotTable", table);
+        }
 
 
 
