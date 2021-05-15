@@ -1,0 +1,33 @@
+﻿@using DocParty.Services.Tables;
+@model ITable
+
+@{
+    Layout = "AppLayout";
+    int rowCount = Model.RowCount;
+    int columnCount = Model.ColumnNames.Length;
+}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (var columnName in Model.ColumnNames)
+                {
+                    <th scope="col">@columnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < rowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < columnCount; j++)
+                    {
+                        string value = Model.Values[i, j];
+
+                        <td>@value</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
