@@ -1,11 +1,10 @@
-﻿@addTagHelper *, DocParty
-@using DocParty.ViewModel;
+﻿@using DocParty.ViewModel;
 @model ProjectsInfo
 
 @{ 
     Layout = "AppLayout";
 }
 <div class="container">
-   @await Html.PartialAsync("ProjectAddingForm");
-   <vc:project-data-table info=@Model />
+   @await Html.PartialAsync("ProjectAddingForm", Model)
+   @await Html.PartialAsync("ProjectTable", Model.Table)
 </div>
