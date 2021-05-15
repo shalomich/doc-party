@@ -1,8 +1,10 @@
 ﻿
+using DocParty.Models;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.AddProject;
 using DocParty.RequestHandlers.Profile;
 using DocParty.RequestHandlers.Projects;
+using DocParty.Services.Tables;
 using DocParty.ViewModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -42,7 +44,16 @@ namespace DocParty.Controllers
 
             IEnumerable<ProjectData> data = await _mediator.Send(request);
 
-            return View("Projects", new ProjectsInfo { Data = data, UserName = userName});
+            var columnReferenceTemplates = new Dictionary<string, string>
+            {
+                {"ProjectName", $"/{userName}/{{0}}" }
+            };
+
+            var table = new ReferencedTable(
+                new NumberedTable(new ObjectTable<ProjectData>(data)),
+                columnReferenceTemplates
+            );  
+            return View("Projects", new ProjectsInfo {Table = table,UserName = userName});
         }
 
         [HttpPost]

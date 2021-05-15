@@ -1,4 +1,5 @@
 ﻿using DocParty.RequestHandlers.Projects;
+using DocParty.Services.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace DocParty.ViewModel
 {
     public class ProjectsInfo
     {
-        public IEnumerable<ProjectData> Data { set; get; } 
+        public ReferencedTable Table { set; get; } 
         public string UserName { set; get; }
     }
 }
