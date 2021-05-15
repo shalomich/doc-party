@@ -1,5 +1,7 @@
-﻿
-<form action="/AndreyGazzaev/projects" method="post">
+﻿@using DocParty.ViewModel;
+@model ProjectsInfo
+
+<form action="/@Model.UserName/projects" method="post">
     <div class="row">
         <div class="offset-4 col-4">
             <div class="form-group row">

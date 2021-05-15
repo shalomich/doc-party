@@ -1,0 +1,54 @@
+﻿@using DocParty.Services.Tables;
+@model ReferencedTable
+
+@{
+    int rowCount = ((ITable)Model).RowCount;
+    int columnCount = Model.ColumnNames.Length;
+}
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (var columnName in Model.ColumnNames)
+            {
+                <th scope="col">@columnName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < rowCount; i++)
+        {
+            string reference = null;
+        <tr>
+            @for (int j = 0; j < columnCount; j++)
+            {
+                string columnName = Model.ColumnNames[j];
+                string value = Model.Values[i, j];
+
+                <td>
+                    @if (Model.ColumnReferences.ContainsKey(columnName))
+                    {
+                        reference = Model.ColumnReferences[columnName][i];
+
+                        <a href=@reference>@value</a>
+                    }
+                    else
+                    {
+                        <span>@value</span>
+                    }
+                </td>            
+            }
+        
+            @{
+                string deletionLink = $"{reference}/deletion";
+            }
+            <td>
+                <form action=@deletionLink method="post">
+                    <button type="submit" class="close btn btn-primary btn-sm" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
