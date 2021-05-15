@@ -45,7 +45,6 @@ namespace DocParty
             services.AddControllersWithViews();
             
             services.AddMediatR(typeof(Startup));
-            services.AddTransient(typeof(Table<>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
