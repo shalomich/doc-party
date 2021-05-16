@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class Comment : IEntity
+    public class Comment : IEntity
     {
         public int Id { set; get; }
 

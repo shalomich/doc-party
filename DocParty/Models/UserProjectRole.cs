@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class UserProjectRole : IdentityUserRole<int>
+    public class UserProjectRole : IdentityUserRole<int>
     {
         public Project Project { set; get; }
         public int ProjectId { set; get; }

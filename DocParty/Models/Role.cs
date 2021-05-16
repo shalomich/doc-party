@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class Role : IdentityRole<int>
+    public class Role : IdentityRole<int>
     {
         public enum Value
         {

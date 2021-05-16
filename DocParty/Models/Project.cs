@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class Project : IEntity
+    public class Project : IEntity
     {
         private static readonly string MaxNameLengthMessage = $"{nameof(Name)} length can be not more than {MaxNameLength}";
         private static readonly string EmptyNameMessage = $"{nameof(Name)} is empty";

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.Models
 {
-    class User : IdentityUser<int>, IEntity
+    public class User : IdentityUser<int>, IEntity
     {
         public override int Id { set; get; }
 
