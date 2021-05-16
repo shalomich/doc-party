@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocParty.RequestHandlers.AddProject
+namespace DocParty.RequestHandlers
 {
-    public class AddingFormData
+    public class SnapshotFormData
     {
-        public string ProjectName { set; get; }
+        public string Name { set; get; }
         public string Description { set; get; }
     }
 }

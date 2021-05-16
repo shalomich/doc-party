@@ -1,0 +1,34 @@
+﻿@using DocParty.Models;
+@model Project
+
+@{
+    Layout = "AppLayout";
+    
+    string projectStateLocation = $"/{Model.Creator.UserName}/{Model.Name}/state";
+    
+    string stateButtonText;
+
+    if (Model.isActive)
+        stateButtonText = "Close project";
+    else stateButtonText = "Open project";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="offset-4 col-4" style="text-align:center">
+            <h1 class="page-header">@Model.Name</h1>
+        </div>
+        <div class="col" style="position:relative">
+            <form action=@projectStateLocation method="post">
+                <button type="submit" class="btn btn-primary" style="position:absolute; right:0px">@stateButtonText</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        @await Html.PartialAsync("SnapshotAddingForm", Model)
+    </div>
+    <div class="row">
+        @await Component.InvokeAsync("ProjectSnapshotsTable", Model)
+    </div>  
+</div>

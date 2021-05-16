@@ -59,12 +59,12 @@ namespace DocParty.Controllers
 
         [HttpPost]
         [Route("projects")]
-        public async Task<IActionResult> AddProject([FromRoute] string userName, [FromForm] AddingFormData data)
+        public async Task<IActionResult> AddProject([FromRoute] string userName, [FromForm] SnapshotFormData formData)
         {
-            var request = new UserHandlerData<AddingFormData, ErrorResponce>
+            var request = new UserHandlerData<SnapshotFormData, ErrorResponce>
             {
                 UserRequest = new UserRequest { UserName = userName },
-                Data = data
+                Data = formData
             };
 
             ErrorResponce responce = await _mediator.Send(request);
@@ -81,7 +81,7 @@ namespace DocParty.Controllers
 
             var table = new NumberedTable(new ObjectTable<SnapshotData>(data));
 
-            return View("SnapshotTable", table);
+            return View("UserSnapshotsTable", table);
         }
 
 
