@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DocParty.RequestHandlers.AddProject
 {
-    class AddProjectHandler : IRequestHandler<UserHandlerData<AddingFormData,ErrorResponce>, ErrorResponce>
+    class AddProjectHandler : IRequestHandler<UserHandlerData<SnapshotFormData,ErrorResponce>, ErrorResponce>
     {
         private const string InvalidProjectName = "This project name is belongs to your other project";
         private ApplicationContext Context { get; }
@@ -19,13 +19,13 @@ namespace DocParty.RequestHandlers.AddProject
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
         
-        public async Task<ErrorResponce> Handle(UserHandlerData<AddingFormData, ErrorResponce> request, CancellationToken cancellationToken)
+        public async Task<ErrorResponce> Handle(UserHandlerData<SnapshotFormData, ErrorResponce> request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();
 
             bool isExist = Context.Projects
                 .Where(project => project.Creator.UserName == request.UserRequest.UserName)
-                .Any(project => project.Name == request.Data.ProjectName);
+                .Any(project => project.Name == request.Data.Name);
 
             if (isExist)
             {
@@ -34,7 +34,7 @@ namespace DocParty.RequestHandlers.AddProject
             }
             User user = await Context.Users.FirstOrDefaultAsync(user => user.UserName == request.UserRequest.UserName);
 
-            var project = new Project(request.Data.ProjectName, request.Data.Description, user);
+            var project = new Project(request.Data.Name, request.Data.Description, user);
 
             await Context.Projects.AddAsync(project);
 
