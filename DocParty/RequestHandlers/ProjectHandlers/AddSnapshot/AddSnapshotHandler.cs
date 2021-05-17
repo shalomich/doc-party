@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.AddSnapshot
 {
-    class AddSnapshotHandler : IRequestHandler<UserHandlerData<SnapshotFormData, ErrorResponce>, ErrorResponce>
+    class AddSnapshotHandler : IRequestHandler<ProjectHandlerData<SnapshotFormData, ErrorResponce>, ErrorResponce>
     {
         private const string InvalidSnapshotName = "This snapshot name is belongs to your other snapshot in this project";
         private ApplicationContext Context { get; }
@@ -18,12 +18,12 @@ namespace DocParty.RequestHandlers.AddSnapshot
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<ErrorResponce> Handle(UserHandlerData<SnapshotFormData, ErrorResponce> request, CancellationToken cancellationToken)
+        public async Task<ErrorResponce> Handle(ProjectHandlerData<SnapshotFormData, ErrorResponce> request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();
 
             bool isExist = await Context.ProjectShapshots
-                .Where(snapshot => snapshot.Project.Name == ((ProjectRequest)request.UserRequest).ProjectName)
+                .Where(snapshot => snapshot.Project.Name == request.ProjectRequest.ProjectName)
                 .AnyAsync(snapshot => snapshot.Name == request.Data.Name);
 
             if (isExist)
@@ -33,11 +33,11 @@ namespace DocParty.RequestHandlers.AddSnapshot
             }
 
             Project project = await Context.Projects
-                .FirstAsync(project => project.Name == ((ProjectRequest)request.UserRequest).ProjectName
-                    && project.AuthorRoles.Any(userRole => userRole.User.UserName == request.UserRequest.UserName));
+                .FirstAsync(project => project.Name == request.ProjectRequest.ProjectName
+                    && project.AuthorRoles.Any(userRole => userRole.User.UserName == request.ProjectRequest.UserName));
 
             User user = await Context.Users
-                .FirstAsync(user => user.UserName == request.UserRequest.UserName);
+                .FirstAsync(user => user.UserName == request.ProjectRequest.UserName);
 
             var snapshot = new ProjectSnapshot
             {
