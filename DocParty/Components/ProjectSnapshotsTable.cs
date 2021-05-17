@@ -13,7 +13,7 @@ namespace DocParty.Components
     {
         public IViewComponentResult Invoke(Project project)
         {
-            var snapshotData = project.Snapshots.Select(snapshot => new ProjectSnapshotsTableData
+            var snapshotData = project.Snapshots.Select(snapshot => new ProjectSnapshotsTableRow
             {
                 Name = snapshot.Name,
                 AuthorName = snapshot.Author.UserName,
@@ -24,14 +24,22 @@ namespace DocParty.Components
             string creatorName = project.Creator.UserName;
 
             var table = new ReferencedTable(
-                new NumberedTable(new ObjectTable<ProjectSnapshotsTableData>(snapshotData)),
+                new NumberedTable(new ObjectTable<ProjectSnapshotsTableRow>(snapshotData)),
                 new Dictionary<string, string>()
                 {
                     {"Name",$"/{creatorName}/{projectName}/{{0}}"}
                 }
             );
 
-            return View(table);        
+            IEnumerable<Comment>[] comments = project.Snapshots
+                .Select(snapshot => snapshot.Comments)
+                .ToArray();
+
+            return View(new ProjectSnapshotsTableData 
+            {
+                Table = table,
+                Comments = comments
+            });        
         }
     }
 }

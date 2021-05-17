@@ -1,14 +1,18 @@
 ﻿@using DocParty.Services.Tables;
-@model ReferencedTable
+@using DocParty.ViewModel
+@using DocParty.Models
+@model ProjectSnapshotsTableData
 
 @{
-    int rowCount = ((ITable)Model).RowCount;
-    int columnCount = Model.ColumnNames.Length;
+    var table = Model.Table;
+    int rowCount = ((ITable)Model.Table).RowCount;
+    int columnCount = table.ColumnNames.Length;
+    int columnCountWithDownloadColumn = columnCount + 1;
 }
 <table class="table">
     <thead>
         <tr>
-            @foreach (var columnName in Model.ColumnNames)
+            @foreach (var columnName in table.ColumnNames)
             {
                 <th scope="col">@columnName</th>
             }
@@ -22,13 +26,13 @@
             <tr>
                 @for (int j = 0; j < columnCount; j++)
                 {
-                    string columnName = Model.ColumnNames[j];
-                    string value = Model.Values[i, j];
+                    string columnName = table.ColumnNames[j];
+                    string value = table.Values[i, j];
 
                     <td>
-                        @if (Model.ColumnReferences.ContainsKey(columnName))
+                        @if (table.ColumnReferences.ContainsKey(columnName))
                         {
-                            reference = Model.ColumnReferences[columnName][i];
+                            reference = table.ColumnReferences[columnName][i];
 
                             <a href=@reference>@value</a>
                         }
@@ -50,6 +54,20 @@
                         </button>
                     </form>
                 </td>
+
+            </tr>
+            <tr>
+                <th colspan=@columnCountWithDownloadColumn>
+                    <strong style="color:blue;font-size:18px">Comments</strong>
+                    @foreach (var comment in Model.Comments[i])
+                    {
+                        string commentItem = $"{comment.Author.UserName}: {comment.Text}";
+
+                    <div class="row">
+                        @commentItem
+                    </div> 
+                    }
+                </th>
             </tr>
         }
     </tbody>
