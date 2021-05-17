@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DocParty.Models;
+using DocParty.Services.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,9 +9,7 @@ namespace DocParty.ViewModel
 {
     public class ProjectSnapshotsTableData
     {
-        public string Name { set; get; }
-        public string AuthorName { set; get; }
-
-        public string Description { set; get; }
+        public ReferencedTable Table { set; get; }
+        public IEnumerable<Comment> [] Comments { set; get; }
     }
 }

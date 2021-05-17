@@ -30,5 +30,8 @@
     </div>
     <div class="row">
         @await Component.InvokeAsync("ProjectSnapshotsTable", Model)
-    </div>  
+    </div>
+    <div class="row">
+        @await Html.PartialAsync("CommentAddingForm")
+    </div>
 </div>
