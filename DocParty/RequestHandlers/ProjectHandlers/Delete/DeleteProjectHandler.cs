@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DocParty.RequestHandlers.DeleteProject
+namespace DocParty.RequestHandlers.Delete
 {
     class DeleteProjectHandler : IRequestHandler<HandlerData<ProjectRequest,ErrorResponce>, ErrorResponce>
     {
