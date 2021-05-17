@@ -1,5 +1,6 @@
 ﻿using DocParty.Models;
 using DocParty.RequestHandlers;
+using DocParty.RequestHandlers.CommentProject;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +39,9 @@ namespace DocParty.Controllers
         {
             string currentUserName = User.Identity.Name;
 
-            var request = new UserHandlerData<SnapshotFormData, ErrorResponce>
+            var request = new ProjectHandlerData<SnapshotFormData, ErrorResponce>
             {
-                UserRequest = new ProjectRequest { UserName = currentUserName, ProjectName = projectName },
+                ProjectRequest = new ProjectRequest { UserName = currentUserName, ProjectName = projectName },
                 Data = formData
             };
 
@@ -76,6 +77,22 @@ namespace DocParty.Controllers
             await _mediator.Send(request);
 
             return RedirectToAction(nameof(Show), new { userName = userName, projectName = projectName});
+        }
+
+        [HttpPost]
+        [Route("comment")]
+        public async Task<IActionResult> Comment([FromRoute] string userName, [FromRoute] string projectName, [FromForm] CommentFormData formData)
+        {
+            var request = new UserHandlerData<CommentFormData, ErrorResponce>
+            {
+                Data = formData, 
+                UserRequest = new ProjectRequest { UserName = userName, ProjectName = projectName },
+            };
+
+            ErrorResponce responce = await _mediator.Send(request);
+
+            return RedirectToAction(nameof(Show), new { userName = userName, projectName = projectName });
+
         }
     }
 }
