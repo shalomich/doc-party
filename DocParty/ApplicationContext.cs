@@ -16,7 +16,7 @@ namespace DocParty
     {
         public DbSet<Project> Projects { set; get; }
         public DbSet<ProjectSnapshot> ProjectShapshots { set; get; }
-        public DbSet<ProjectSnapshot> Comments { set; get; }
+        public DbSet<Comment> Comments { set; get; }
 
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
