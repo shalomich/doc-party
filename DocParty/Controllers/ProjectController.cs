@@ -1,6 +1,7 @@
 ﻿using DocParty.Models;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.CommentProject;
+using DocParty.RequestHandlers.ProjectHandlers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,81 +18,104 @@ namespace DocParty.Controllers
     {
         private readonly IMediator _mediator;
 
+        private Project _project;
+
         public ProjectController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public async Task<IActionResult> Show([FromRoute] string userName, [FromRoute] string projectName)
+        public async Task<IActionResult> Show([FromRoute] ProjectRoute route)
         {
-            var request = new HandlerData<ProjectRequest, Project>
+            await Init(route);
+
+            var request = new HandlerData<Project, Project>
             {
-                Data = new ProjectRequest { UserName = userName, ProjectName = projectName },
+                Data = _project
             };
 
-            Project project = await _mediator.Send(request);
+            Project projectWithSnapshots = await _mediator.Send(request);
 
-            return View("Project", project);
+            return View("Project", projectWithSnapshots);
+        }
+
+        private async Task Init(ProjectRoute route)
+        {
+            
+            var request = new HandlerData<ProjectRoute, Project>
+            {
+                Data = route
+            };
+
+            _project = await _mediator.Send(request);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSnapshot([FromRoute] string userName, [FromRoute] string projectName, [FromForm] SnapshotFormData formData)
+        public async Task<IActionResult> AddSnapshot([FromForm] SnapshotFormData formData, [FromRoute] ProjectRoute route)
         {
+            await Init(route);
+
             string currentUserName = User.Identity.Name;
 
             var request = new ProjectHandlerData<SnapshotFormData, ErrorResponce>
             {
-                ProjectRequest = new ProjectRequest { UserName = currentUserName, ProjectName = projectName },
+                Project = _project,
                 Data = formData
             };
 
             ErrorResponce responce = await _mediator.Send(request);
 
-            return RedirectToAction(nameof(Show), new { userName = userName, projectName = projectName });
+            return RedirectToAction(nameof(Show), route);
         }
 
         [HttpPost]
         [Route("deletion")]
-        public async Task<IActionResult> Delete([FromRoute] string userName, [FromRoute] string projectName)
+        public async Task<IActionResult> Delete([FromRoute] ProjectRoute route)
         {
-            var request = new HandlerData<ProjectRequest, ErrorResponce>
+            await Init(route);
+
+            var request = new HandlerData<Project, ErrorResponce>
             {
-                Data = new ProjectRequest { UserName = userName, ProjectName = projectName },
+                Data = _project
             };
 
             ErrorResponce responce = await _mediator.Send(request);
 
-            return RedirectToRoute("Projects",new {userName = userName});
+            return RedirectToRoute("Projects", new { userName = route.UserName});
         }
 
         [HttpPost]
         [Route("state")]
         
-        public async Task<IActionResult> ChangeState([FromRoute] string userName, [FromRoute] string projectName)
+        public async Task<IActionResult> ChangeState([FromRoute] ProjectRoute route)
         {
-            var request = new HandlerData<ProjectRequest, Unit>
+            await Init(route);
+
+            var request = new HandlerData<Project, Unit>
             {
-                Data = new ProjectRequest { UserName = userName, ProjectName = projectName },
+                Data = _project,
             };
 
             await _mediator.Send(request);
 
-            return RedirectToAction(nameof(Show), new { userName = userName, projectName = projectName});
+            return RedirectToAction(nameof(Show), route);
         }
 
         [HttpPost]
         [Route("comment")]
-        public async Task<IActionResult> Comment([FromRoute] string userName, [FromRoute] string projectName, [FromForm] CommentFormData formData)
+        public async Task<IActionResult> Comment([FromForm] CommentFormData formData, [FromRoute] ProjectRoute route)
         {
-            var request = new UserHandlerData<CommentFormData, ErrorResponce>
+            await Init(route);
+
+            var request = new ProjectHandlerData<CommentFormData, ErrorResponce>
             {
                 Data = formData, 
-                UserRequest = new ProjectRequest { UserName = userName, ProjectName = projectName },
+                Project = _project,
             };
 
             ErrorResponce responce = await _mediator.Send(request);
 
-            return RedirectToAction(nameof(Show), new { userName = userName, projectName = projectName });
+            return RedirectToAction(nameof(Show), route);
 
         }
     }

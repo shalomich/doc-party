@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.Delete
 {
-    class DeleteProjectHandler : IRequestHandler<HandlerData<ProjectRequest,ErrorResponce>, ErrorResponce>
+    class DeleteProjectHandler : IRequestHandler<HandlerData<Project,ErrorResponce>, ErrorResponce>
     {
         private ApplicationContext Context { get; }
 
@@ -17,14 +17,10 @@ namespace DocParty.RequestHandlers.Delete
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<ErrorResponce> Handle(HandlerData<ProjectRequest, ErrorResponce> request, CancellationToken cancellationToken)
+        public async Task<ErrorResponce> Handle(HandlerData<Project, ErrorResponce> request, CancellationToken cancellationToken)
         {
-            Project project = await Context.Projects
-            .Where(project => project.Creator.UserName == request.Data.UserName)
-            .FirstOrDefaultAsync(project => project.Name == request.Data.ProjectName);
-
-            Context.Projects.Remove(project);
-            Context.SaveChanges();
+            Context.Projects.Remove(request.Data);
+            await Context.SaveChangesAsync();
 
             return new ErrorResponce(new List<string>());
 

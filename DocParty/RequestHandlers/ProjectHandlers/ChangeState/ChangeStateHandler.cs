@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.ChangeState
 {
-    class ChangeStateHandler : IRequestHandler<HandlerData<ProjectRequest, Unit>, Unit>
+    class ChangeStateHandler : IRequestHandler<HandlerData<Project, Unit>, Unit>
     {
         private ApplicationContext Context { get; }
 
@@ -17,11 +17,9 @@ namespace DocParty.RequestHandlers.ChangeState
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<Unit> Handle(HandlerData<ProjectRequest, Unit> request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(HandlerData<Project, Unit> request, CancellationToken cancellationToken)
         {
-            Project project = await Context.Projects
-                .FirstAsync(project => project.Name == request.Data.ProjectName
-                    && project.Creator.UserName == request.Data.UserName);
+            Project project = request.Data;
 
             project.isActive = !project.isActive;
 

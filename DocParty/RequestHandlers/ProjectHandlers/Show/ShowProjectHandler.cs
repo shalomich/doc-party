@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.ShowProject
 {
-    class ShowProjectHandler : IRequestHandler<HandlerData<ProjectRequest, Project>, Project>
+    class ShowProjectHandler : IRequestHandler<HandlerData<Project, Project>, Project>
     {
         private ApplicationContext Context { get; }
         private Paginator<ProjectSnapshot,Comment> CommentPaginator { get; }
@@ -23,14 +23,14 @@ namespace DocParty.RequestHandlers.ShowProject
             SnapshotPaginator = snapshotPaginator ?? throw new ArgumentNullException(nameof(snapshotPaginator));
         }
 
-        public async Task<Project> Handle(HandlerData<ProjectRequest, Project> request, CancellationToken cancellationToken)
+        public async Task<Project> Handle(HandlerData<Project, Project> request, CancellationToken cancellationToken)
         {
             return await Context.Projects
                 .Include(project => project.Creator)
-                .Include(project => SnapshotPaginator.Get(project).GetPage(project.Snapshots.AsQueryable()))
-                    .ThenInclude(snapshot => CommentPaginator.Get(snapshot).GetPage(snapshot.Comments.AsQueryable()))
-                .FirstAsync(project => project.Name == request.Data.ProjectName
-                    && project.Creator.UserName == request.Data.UserName);
+                .Include(project => project.Snapshots)
+                    .ThenInclude(snapshot => snapshot.Comments)
+                .FirstAsync(project => project.Name == request.Data.Name
+                    && project.Creator.UserName == request.Data.Creator.UserName);
         }
     }
 }

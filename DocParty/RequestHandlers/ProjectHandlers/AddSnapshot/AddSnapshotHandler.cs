@@ -1,4 +1,5 @@
 ﻿using DocParty.Models;
+using DocParty.RequestHandlers.ProjectHandlers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,7 +24,7 @@ namespace DocParty.RequestHandlers.AddSnapshot
             var errors = new List<string>();
 
             bool isExist = await Context.ProjectShapshots
-                .Where(snapshot => snapshot.Project.Name == request.ProjectRequest.ProjectName)
+                .Where(snapshot => snapshot.Project.Name == request.Project.Name)
                 .AnyAsync(snapshot => snapshot.Name == request.Data.Name);
 
             if (isExist)
@@ -32,18 +33,14 @@ namespace DocParty.RequestHandlers.AddSnapshot
                 return new ErrorResponce(errors);
             }
 
-            Project project = await Context.Projects
-                .FirstAsync(project => project.Name == request.ProjectRequest.ProjectName
-                    && project.AuthorRoles.Any(userRole => userRole.User.UserName == request.ProjectRequest.UserName));
-
             User user = await Context.Users
-                .FirstAsync(user => user.UserName == request.ProjectRequest.UserName);
+                .FirstAsync(user => user.UserName == request.Project.Creator.UserName);
 
             var snapshot = new ProjectSnapshot
             {
                 Name = request.Data.Name,
                 Description = request.Data.Description,
-                Project = project,
+                Project = request.Project,
                 Author = user
             };
 
