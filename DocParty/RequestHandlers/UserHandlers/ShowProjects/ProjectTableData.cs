@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.Projects
 {
-    public class ProjectData
+    public class ProjectTableData
     {
         public string ProjectName { set; get; }
         public string CreatorName { set; get; }

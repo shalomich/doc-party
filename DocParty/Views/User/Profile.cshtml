@@ -1,4 +1,4 @@
-﻿@model DocParty.RequestHandlers.Profile.UserProfile
+﻿@model Dictionary<string,int>
 
 @{ 
     Layout = "AppLayout";
@@ -18,7 +18,7 @@
 <div class="container">
     
     <div class="row">
-        @foreach (KeyValuePair<string,int> metric in Model.Statistics)
+        @foreach (KeyValuePair<string,int> metric in Model)
         {
             <div class="col-6">
                 <div class="row">

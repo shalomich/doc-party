@@ -1,14 +1,11 @@
-﻿
-using DocParty.RequestHandlers.Profile;
-using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocParty.RequestHandlers
+namespace DocParty.RequestHandlers.UserHandlers
 {
-    public class UserRequest
+    public class UserRoute
     {
         public string UserName { set; get; }
     }

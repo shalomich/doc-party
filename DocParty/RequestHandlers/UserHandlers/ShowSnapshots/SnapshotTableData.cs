@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.ShowSnapshots
 {
-    public class SnapshotData
+    public class SnapshotTableData
     {
         public string SnapshotName { set; get; }
         public string ProjectName { set; get; }

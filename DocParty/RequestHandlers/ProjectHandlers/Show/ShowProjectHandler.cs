@@ -1,5 +1,4 @@
 ﻿using DocParty.Models;
-using DocParty.Services.Paginators;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,14 +12,10 @@ namespace DocParty.RequestHandlers.ShowProject
     class ShowProjectHandler : IRequestHandler<HandlerData<Project, Project>, Project>
     {
         private ApplicationContext Context { get; }
-        private Paginator<ProjectSnapshot,Comment> CommentPaginator { get; }
-        private Paginator<Project, ProjectSnapshot> SnapshotPaginator { get; }
 
-        public ShowProjectHandler(ApplicationContext context, Paginator<ProjectSnapshot, Comment> commentPaginator, Paginator<Project, ProjectSnapshot> snapshotPaginator)
+        public ShowProjectHandler(ApplicationContext context)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            CommentPaginator = commentPaginator ?? throw new ArgumentNullException(nameof(commentPaginator));
-            SnapshotPaginator = snapshotPaginator ?? throw new ArgumentNullException(nameof(snapshotPaginator));
         }
 
         public async Task<Project> Handle(HandlerData<Project, Project> request, CancellationToken cancellationToken)

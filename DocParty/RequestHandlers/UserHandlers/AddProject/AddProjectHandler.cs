@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using DocParty.RequestHandlers.UserHandlers;
 
 namespace DocParty.RequestHandlers.AddProject
 {
@@ -24,7 +25,7 @@ namespace DocParty.RequestHandlers.AddProject
             var errors = new List<string>();
 
             bool isExist = Context.Projects
-                .Where(project => project.Creator.UserName == request.UserRequest.UserName)
+                .Where(project => project.Creator.UserName == request.User.UserName)
                 .Any(project => project.Name == request.Data.Name);
 
             if (isExist)
@@ -32,9 +33,8 @@ namespace DocParty.RequestHandlers.AddProject
                 errors.Add(InvalidProjectName);
                 return new ErrorResponce(errors);
             }
-            User user = await Context.Users.FirstOrDefaultAsync(user => user.UserName == request.UserRequest.UserName);
-
-            var project = new Project(request.Data.Name, request.Data.Description, user);
+            
+            var project = new Project(request.Data.Name, request.Data.Description, request.User);
 
             await Context.Projects.AddAsync(project);
 

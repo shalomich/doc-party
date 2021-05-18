@@ -10,16 +10,8 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.Profile
 {
-    class ShowProfileHandler : IRequestHandler<HandlerData<UserRequest,UserProfile>, UserProfile>
+    class ShowProfileHandler : IRequestHandler<HandlerData<User,UserStatistics>, UserStatistics>
     {
-        private readonly IReadOnlyDictionary<string, Func<User, int>> MetricFunctions = new Dictionary<string, Func<User, int>>()
-        {
-            {"All project's count", user => user.Projects.Count()},
-            {"All project snapshots'count", user => user.Projects.Select(project => project.Snapshots.Count()).Sum()},
-            {"ProjectRoles's count in creator role", user => user.Projects.Where(project => project.CreatorId == user.Id).Count() },
-            {"ProjectRoles's count in author role", user => user.Projects.Where(project => project.CreatorId != user.Id).Count() },
-            {"Closed project' count", user => user.Projects.Where(project => project.isActive == false).Count() }
-        };
         private ApplicationContext Context { get; }
 
         public ShowProfileHandler(ApplicationContext context)
@@ -27,18 +19,38 @@ namespace DocParty.RequestHandlers.Profile
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        
-
-        public async Task<UserProfile> Handle(HandlerData<UserRequest, UserProfile> request, CancellationToken cancellationToken)
+        public async Task<UserStatistics> Handle(HandlerData<User, UserStatistics> request, CancellationToken cancellationToken)
         {
-            User user = await Context.Users
-                                    .Include(user => user.Projects)
-                                    .ThenInclude(project => project.Snapshots)
-                                    .FirstOrDefaultAsync(user => user.UserName == request.Data.UserName);
+            string userName = request.Data.UserName;
 
-            return new UserProfile
+            var allUserProjects = Context.Projects
+                    .Where(project => project.AuthorRoles.Any(authorRole => authorRole.User.UserName == userName));
+
+            var createdByUserProjects = Context.Projects
+                    .Where(project => project.Creator.UserName == userName);
+
+            var allUserProjectSnapshots = Context.ProjectShapshots
+                    .Where(snapshot => snapshot.Project.Creator.UserName == userName);
+
+            var createdByUserSnapshots = Context.ProjectShapshots
+                    .Where(snapshot => snapshot.Author.UserName == userName);
+
+            var writtenByUserComments = Context.Comments
+                    .Where(comment => comment.Author.UserName == userName);
+
+            var allUserProjectComments = Context.Comments
+                    .Where(comment => comment.ProjectSnapshot.Project.Creator.UserName == userName);
+
+            return new UserStatistics
             {
-                Statistics = MetricFunctions.ToDictionary(metric => metric.Key, metric => metric.Value(user))
+                AllProjectCount = allUserProjects.Count(),
+                CreatedProjectCount = createdByUserProjects.Count(),
+                ClosedAllProjectCount = allUserProjects.Where(project => project.isActive == false).Count(),
+                ClosedCreatedProjectCount = createdByUserProjects.Where(project => project.isActive == false).Count(),
+                AllUserProjectSnapshotsCount = allUserProjectSnapshots.Count(),
+                CreatedSnapshotsCount = createdByUserSnapshots.Count(),
+                AllUserProjectCommentCount = allUserProjectSnapshots.Count(),
+                WrittenCommentCount = writtenByUserComments.Count()
             };
         }
     }
