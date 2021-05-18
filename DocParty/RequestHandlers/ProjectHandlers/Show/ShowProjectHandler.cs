@@ -20,12 +20,27 @@ namespace DocParty.RequestHandlers.ShowProject
 
         public async Task<Project> Handle(HandlerData<Project, Project> request, CancellationToken cancellationToken)
         {
-            return await Context.Projects
-                .Include(project => project.Creator)
-                .Include(project => project.Snapshots)
-                    .ThenInclude(snapshot => snapshot.Comments)
+            var project = await Context.Projects
                 .FirstAsync(project => project.Name == request.Data.Name
                     && project.Creator.UserName == request.Data.Creator.UserName);
+
+            var snapshots = SnapshotPaginator.Get(project)
+                .GetPage(Context.ProjectShapshots
+                    .Where(snapshot => snapshot.Project.Name == request.Data.Name))
+                .ToList();
+
+            foreach (var snapshot in snapshots)
+            {
+                var comments = CommentPaginator.Get(snapshot)
+                    .GetPage(Context.Comments
+                        .Where(comment => comment.ProjectSnapshot.Name == snapshot.Name))
+                    .ToList();
+                snapshot.Comments = comments;
+            }
+
+            project.Snapshots = snapshots;
+
+            return project;
         }
     }
 }

@@ -15,6 +15,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using DocParty.Services;
 using DocParty.RequestHandlers.Projects;
+using DocParty.Filters;
+using DocParty.Services.Paginators;
 
 namespace DocParty
 {
@@ -45,6 +47,14 @@ namespace DocParty
             services.AddControllersWithViews();
             
             services.AddMediatR(typeof(Startup));
+
+            services.AddScoped<PaginationFilter>();
+
+            var commentPaginator = Configuration.GetSection("Pagination:Comment").Get<IncreasedPaginator<ProjectSnapshot, Comment>>();
+            var snapshotPaginator = Configuration.GetSection("Pagination:Snapshot").Get<NumberedPaginator<Project, ProjectSnapshot>> ();
+
+            services.AddSingleton<Paginator<ProjectSnapshot, Comment>>(commentPaginator); 
+            services.AddSingleton<Paginator<Project,ProjectSnapshot>>(snapshotPaginator);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

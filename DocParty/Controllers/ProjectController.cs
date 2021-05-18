@@ -1,4 +1,5 @@
-﻿using DocParty.Models;
+﻿using DocParty.Filters;
+using DocParty.Models;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.CommentProject;
 using DocParty.RequestHandlers.ProjectHandlers;
@@ -25,6 +26,7 @@ namespace DocParty.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        [ServiceFilter(typeof(PaginationFilter))]
         public async Task<IActionResult> Show([FromRoute] ProjectRoute route)
         {
             await Init(route);
