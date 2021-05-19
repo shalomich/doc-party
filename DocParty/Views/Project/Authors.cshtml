@@ -1,0 +1,39 @@
+﻿@using DocParty.Models
+@model IEnumerable<User>
+
+@{ 
+    Layout = "AppLayout";
+
+    string creatorName = (string) Context.Request.RouteValues["userName"];
+    string projectName = (string) Context.Request.RouteValues["projectName"];
+    string projectLocation = $"/{creatorName}/{projectName}";
+    string deleteAuthorLocation = $"{Context.Request.Path}/deletion";
+}
+
+<div class="container">
+    <a href=@projectLocation>@projectName</a>
+    <div class="row">
+        <form method="post">
+            <div class="form-group">
+                <div class="col">
+                    <input placeholder="Enter an email" name="email" />
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <h4>Delete author</h4>
+        <form action=@deleteAuthorLocation method="post">
+            <div class="list-group">
+                @foreach (var user in Model)
+                {
+                    string userName = user.UserName;
+                    <div class="col-3">
+                        <button name=@nameof(userName) value=@userName type="submit" class="list-group-item list-group-item-action" style="border:1px solid blue">@userName</button>
+                    </div>
+                }
+            </div>
+        </form>
+    </div>
+</div>

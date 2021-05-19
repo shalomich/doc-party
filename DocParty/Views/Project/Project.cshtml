@@ -3,20 +3,26 @@
 
 @{
     Layout = "AppLayout";
-    
-    string projectStateLocation = $"/{Model.Creator.UserName}/{Model.Name}/state";
-    
+
+    string projectLocation = Context.Request.Path;
+    string projectStateLocation = $"{projectLocation}/state";
+
     string stateButtonText;
 
     if (Model.isActive)
         stateButtonText = "Close project";
     else stateButtonText = "Open project";
+
+    string authorsLocation = $"{projectLocation}/authors";
 }
 
 
 <div class="container">
     <div class="row">
-        <div class="offset-4 col-4" style="text-align:center">
+        <div class="col-4">
+            <a href=@authorsLocation>Authors</a>
+        </div>
+        <div class="col-4" style="text-align:center">
             <h1 class="page-header">@Model.Name</h1>
         </div>
         <div class="col" style="position:relative">
