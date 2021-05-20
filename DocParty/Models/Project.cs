@@ -16,29 +16,20 @@ namespace DocParty.Models
 
         public Project()
         {
-
+            var initialSnapshot = new ProjectSnapshot();
+            
+            Snapshots = new List<ProjectSnapshot>() 
+            {
+                initialSnapshot
+            };
         }
-        public Project(string projectName, string description, User creator)
-        {
+        public Project(string projectName, string description) : this()
+        { 
             Name = projectName;
-            Creator = creator;
 
-            var initialSnapshot = new ProjectSnapshot
-            {
-                Name = projectName,
-                Description = description,
-                Author = creator
-            };
+            var initialSnapshot = Snapshots.First();
 
-            Snapshots = new List<ProjectSnapshot>() { initialSnapshot };
-
-            var creatorRole = new UserProjectRole
-            {
-                Role = new Role { Name = Role.Value.Creator.ToString() },
-                User = creator
-            };
-
-            AuthorRoles = new List<UserProjectRole>() { creatorRole };
+            initialSnapshot.Description = description;
         }
         public int Id { set; get; }
         public string Name
@@ -49,7 +40,9 @@ namespace DocParty.Models
                     throw new ArgumentException(EmptyNameMessage);
                 if (value.Length > MaxNameLength)
                     throw new ArgumentException(MaxNameLengthMessage);
+                
                 _name = value;
+                Snapshots.First().Name = value;
             }
             get
             {
@@ -60,8 +53,7 @@ namespace DocParty.Models
         public User Creator { set; get; }
         public int? CreatorId { set; get; }
         public IEnumerable<UserProjectRole> AuthorRoles { set; get; }
-        public IEnumerable<ProjectSnapshot> Snapshots { set; get; }
+        public IEnumerable<ProjectSnapshot> Snapshots { get; }
 
-        
     }
 }

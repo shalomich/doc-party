@@ -1,4 +1,6 @@
 ﻿using DocParty.Models;
+using DocParty.RequestHandlers.UserHandlers;
+using DocParty.RequestHandlers.UserHandlers.DeleteAuthor;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
 {
-    class DeleteAuthorHandler : IRequestHandler<ProjectHandlerData<string, ErrorResponce>, ErrorResponce>
+    class DeleteAuthorHandler : IRequestHandler<UserHandlerData<AuthorDeletingFormData, ErrorResponce>, ErrorResponce>
     {
         private ApplicationContext Context { get; }
 
@@ -17,16 +19,15 @@ namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<ErrorResponce> Handle(ProjectHandlerData<string, ErrorResponce> request, CancellationToken cancellationToken)
+        public async Task<ErrorResponce> Handle(UserHandlerData<AuthorDeletingFormData, ErrorResponce> request, CancellationToken cancellationToken)
         {
-            string userName = request.Data;
-
             User user = await Context.Users
                 .Include(user => user.ProjectRoles)
-                .FirstAsync(user => user.UserName == userName);
+                    .ThenInclude(projectRole => projectRole.Project)
+                .FirstAsync(user => user.UserName == request.Data.UserName);
 
             UserProjectRole projectRole = user.ProjectRoles
-                .First(projectRole => projectRole.Project.Name == request.Project.Name);
+                .First(projectRole => projectRole.Project.Name == request.Data.ProjectName);
 
             user.ProjectRoles = user.ProjectRoles.ToList();
             ((List<UserProjectRole>)user.ProjectRoles).Remove(projectRole);

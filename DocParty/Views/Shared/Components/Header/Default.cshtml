@@ -17,12 +17,13 @@
         <div class="header-item text">DocParty</div>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a class="nav-item nav-link header-item" href=@Model.ProjectsUrl>Projects</a>
-                <a class="nav-item nav-link header-item" href=@Model.ProjectSnapshotsUrl>ProjectSnapshots</a>
+                <a class="nav-item nav-link header-item" href=@Model.ProjectsLocation>Projects</a>
+                <a class="nav-item nav-link header-item" href=@Model.ProjectSnapshotsLocation>ProjectSnapshots</a>
+                <a class="nav-item nav-link header-item" href=@Model.AuthorsLocation>Authors</a>
             </div>
             <div class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <a class="nav-item nav-link header-item" href="/account/logout">Sign out</a>
-                <a class="nav-item nav-link header-item" href=@Model.UserProfileUrl > @Model.UserName</a>
+                <a class="nav-item nav-link header-item" href=@Model.UserProfileLocation > @Model.UserName</a>
             </div>
         </div>
         

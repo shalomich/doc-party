@@ -20,7 +20,7 @@ namespace DocParty
 {
     public class Startup
     {
-        private const string AuthUrlConfigPath = "Locations:Authentication";
+        private const string AuthLocationConfigPath = "Locations:Authentication";
         private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -39,7 +39,7 @@ namespace DocParty
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
-                options.LoginPath = Configuration[AuthUrlConfigPath];
+                options.LoginPath = Configuration[AuthLocationConfigPath];
             });
 
             services.AddControllersWithViews();

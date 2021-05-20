@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DocParty.RequestHandlers.UserHandlers;
+using Microsoft.AspNetCore.Identity;
 
 namespace DocParty.RequestHandlers.AddProject
 {
@@ -14,14 +15,16 @@ namespace DocParty.RequestHandlers.AddProject
     {
         private const string InvalidProjectName = "This project name is belongs to your other project";
         private ApplicationContext Context { get; }
+        private RoleManager<Role> RoleManager { get; }
 
-        public AddProjectHandler(ApplicationContext context)
+        public AddProjectHandler(ApplicationContext context, RoleManager<Role> roleManager)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
+            RoleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         }
-        
+
         public async Task<ErrorResponce> Handle(UserHandlerData<SnapshotFormData, ErrorResponce> request, CancellationToken cancellationToken)
-        {
+        { 
             var errors = new List<string>();
 
             bool isExist = Context.Projects
@@ -34,14 +37,28 @@ namespace DocParty.RequestHandlers.AddProject
                 return new ErrorResponce(errors);
             }
             
-            var project = new Project(request.Data.Name, request.Data.Description, request.User);
+            var project = new Project(request.Data.Name, request.Data.Description);
 
-            await Context.Projects.AddAsync(project);
+            Role creatorRole = await RoleManager.FindByNameAsync(Role.Value.Creator.ToString());
+             
+            var user = await Context.Users
+                .Include(user => user.ProjectRoles)
+                .FirstAsync(user => user.UserName == request.User.UserName);
 
-            Context.SaveChanges();
+            project.Creator = user;
+
+            user.ProjectRoles = user.ProjectRoles.ToList();
+            ((List<UserProjectRole>)user.ProjectRoles).Add(new UserProjectRole
+            {
+                Project = project,
+                Role = creatorRole
+            });
+
+
+            Context.Users.Update(user);
+            await Context.SaveChangesAsync();
 
             return new ErrorResponce(errors);
-
         }
     }
 }

@@ -11,7 +11,8 @@ namespace DocParty.Models
         public enum Value
         {
             Creator,
-            Author
+            Author,
+            Visitor
         }
         public IEnumerable<UserProjectRole> ProjectRoles { set; get; }
     }

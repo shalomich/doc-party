@@ -6,6 +6,8 @@ using DocParty.RequestHandlers.Profile;
 using DocParty.RequestHandlers.Projects;
 using DocParty.RequestHandlers.ShowSnapshots;
 using DocParty.RequestHandlers.UserHandlers;
+using DocParty.RequestHandlers.UserHandlers.AddAuthor;
+using DocParty.RequestHandlers.UserHandlers.DeleteAuthor;
 using DocParty.Services.Tables;
 using DocParty.ViewModel;
 using MediatR;
@@ -110,7 +112,54 @@ namespace DocParty.Controllers
             return View("UserSnapshotsTable", table);
         }
 
+        [Route("authors")]
+        public async Task<IActionResult> ShowAuthors([FromRoute] UserRoute route)
+        {
+            await Init(route);
 
+            var request = new HandlerData<User, ILookup<Project,User>>
+            {
+                Data = _user,
+            };
+
+            ILookup<Project,User> authorsByProject = await _mediator.Send(request);
+
+            return View("Authors", authorsByProject);
+        }
+
+        [Route("authors")]
+        [HttpPost]
+        public async Task<IActionResult> AddAuthor([FromForm] AuthorAddingFormData formData, [FromRoute] UserRoute route)
+        {
+            await Init(route);
+
+            var request = new UserHandlerData<AuthorAddingFormData, ErrorResponce>
+            {
+                Data = formData,
+                User = _user
+            };
+
+            ErrorResponce responce = await _mediator.Send(request);
+
+            return RedirectToAction(nameof(ShowAuthors), route);
+        }
+
+        [Route("authors/deletion")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteAuthor([FromForm] AuthorDeletingFormData formData, [FromRoute] UserRoute route)
+        {
+            await Init(route);
+
+            var request = new UserHandlerData<AuthorDeletingFormData, ErrorResponce>
+            {
+                Data = formData,
+                User = _user
+            };
+
+            ErrorResponce responce = await _mediator.Send(request);
+
+            return RedirectToAction(nameof(ShowAuthors), route);
+        }
 
     }
 }

@@ -1,0 +1,41 @@
+﻿@using DocParty.Models;
+@model ILookup<Project,User>
+
+@{ 
+    string deleteAuthorLocation = $"{Context.Request.Path}/deletion";
+}
+
+@foreach (var authorsByProject in Model)
+{
+    string projectName = authorsByProject.Key.Name;
+
+    <h3>@projectName</h3>
+    <div class="list-group">
+        @foreach (var author in authorsByProject)
+        {
+            string userName = author?.UserName;
+
+            if (userName != null)
+            {
+                <div class="col-3 list-group-item">
+                    <div class="row">
+                        <div class="col-10">
+                            <span>@userName</span>
+                        </div>
+                        <div class="col-2">
+                            <form action=@deleteAuthorLocation method="post">
+                                <input type="hidden" name=@nameof(userName) value=@userName />
+                                <input type="hidden" name=@nameof(projectName) value=@projectName />
+                                <button type="submit" class="close btn btn-primary btn-sm" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+    </div>
+}
+ 

@@ -10,10 +10,10 @@ namespace DocParty.Components
 {
     public class Header : ViewComponent
     {
-        public const string UserProfileUrl = "/{0}";
-        public const string UserProjectsUrl = "/{0}/projects";
-        public const string UserProjectSnapshotsUrl = "/{0}/shapshots";
-        
+        public const string UserProfileLocation = "/{0}";
+        public const string UserProjectsLocation = "/{0}/projects";
+        public const string UserProjectSnapshotsLocation = "/{0}/shapshots";
+        public const string UserProjectAuthorsLocation = "/{0}/authors";
         public IViewComponentResult Invoke()
         {
             string userName = HttpContext.User.Identity.Name;
@@ -21,9 +21,10 @@ namespace DocParty.Components
             var info = new HeaderInfo
             {
                 UserName = userName,
-                UserProfileUrl = String.Format(UserProfileUrl, userName),
-                ProjectsUrl = String.Format(UserProjectsUrl, userName),
-                ProjectSnapshotsUrl = String.Format(UserProjectSnapshotsUrl, userName)
+                UserProfileLocation = String.Format(UserProfileLocation, userName),
+                ProjectsLocation = String.Format(UserProjectsLocation, userName),
+                ProjectSnapshotsLocation = String.Format(UserProjectSnapshotsLocation, userName),
+                AuthorsLocation = String.Format(UserProjectAuthorsLocation, userName)
             };
 
             return View(info);

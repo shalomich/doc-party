@@ -47,6 +47,14 @@ namespace DocParty
                     .HasForeignKey(projectRole => projectRole.RoleId)
                     .IsRequired()
             );
+
+            modelBuilder.Entity<UserProjectRole>()
+                .HasKey(userProjectRole => new
+                {
+                    userProjectRole.UserId,
+                    userProjectRole.RoleId,
+                    userProjectRole.ProjectId
+                });
         }
     }
 }

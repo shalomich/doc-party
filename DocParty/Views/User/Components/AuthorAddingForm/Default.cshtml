@@ -1,0 +1,21 @@
+﻿@model SelectList
+
+<form method="post">
+    <div class="form-group row">
+        <label for="projectName" class="col-2 col-form-label">Project name</label>
+        <div class="col-2">
+            @Html.DropDownList("projectName", Model)
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="email" class="col-2 col-form-label">Enter email</label>
+        <div class="col-2">
+            <input name="email"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-2">
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+</form>

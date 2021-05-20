@@ -2,7 +2,6 @@
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.CommentProject;
 using DocParty.RequestHandlers.ProjectHandlers;
-using DocParty.RequestHandlers.ProjectHandlers.AddAuthor;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -118,55 +117,6 @@ namespace DocParty.Controllers
 
             return RedirectToAction(nameof(Show), route);
 
-        }
-
-        [Route("authors")]
-        public async Task<IActionResult> ShowAuthors([FromRoute] ProjectRoute route)
-        {
-            await Init(route);
-
-            var request = new HandlerData<Project, IEnumerable<User>>
-            {
-                Data = _project,
-            };
-
-            IEnumerable<User> authors = await _mediator.Send(request);
-
-            return View("Authors", authors);
-        }
-
-        [Route("authors")]
-        [HttpPost]
-        public async Task<IActionResult> AddAuthor([FromForm] AuthorFormData formData, [FromRoute] ProjectRoute route)
-        {
-            await Init(route);
-
-            var request = new ProjectHandlerData<AuthorFormData, ErrorResponce>
-            {
-                Data = formData,
-                Project = _project
-            };
-
-            ErrorResponce responce = await _mediator.Send(request);
-
-            return RedirectToAction(nameof(ShowAuthors), route);
-        }
-
-        [Route("authors/deletion")]
-        [HttpPost]
-        public async Task<IActionResult> DeleteAuthor([FromForm] string userName, [FromRoute] ProjectRoute route)
-        {
-            await Init(route);
-
-            var request = new ProjectHandlerData<string, ErrorResponce>
-            {
-                Data = userName,
-                Project = _project
-            };
-
-            ErrorResponce responce = await _mediator.Send(request);
-
-            return RedirectToAction(nameof(ShowAuthors), route);
         }
     }
 }
