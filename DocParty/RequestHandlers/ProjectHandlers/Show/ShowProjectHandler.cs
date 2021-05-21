@@ -23,6 +23,7 @@ namespace DocParty.RequestHandlers.ShowProject
         {
             return await Context.ProjectShapshots
              .Include(snapshot => snapshot.Comments)
+             .Include(snapshot => snapshot.Author)
              .Where(snapshot => snapshot.Project.Name == request.Data.Name
                  && snapshot.Project.Creator.UserName == request.Data.Creator.UserName)
              .ToDictionaryAsync(snapshot =>
