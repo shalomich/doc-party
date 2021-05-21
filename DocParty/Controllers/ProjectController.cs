@@ -88,12 +88,10 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            string currentUserName = User.Identity.Name;
-
-            var request = new ProjectHandlerData<SnapshotFormData, ErrorResponce>
+            var request = new ProjectHandlerData<(string UserName, SnapshotFormData FormData), ErrorResponce>
             {
                 Project = _project,
-                Data = formData
+                Data = (User.Identity.Name,formData)
             };
 
             ErrorResponce responce = await _mediator.Send(request);
@@ -140,9 +138,9 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            var request = new ProjectHandlerData<CommentFormData, ErrorResponce>
+            var request = new ProjectHandlerData<(string UserName, CommentFormData FormData), ErrorResponce>
             {
-                Data = formData, 
+                Data = (User.Identity.Name,formData), 
                 Project = _project,
             };
 

@@ -29,7 +29,8 @@ namespace DocParty.RequestHandlers.UserHandlers.AddAuthor
 
             bool isAlreadyInProject = Context.Users
                 .Where(user => user.ProjectRoles
-                    .Any(projectRole => projectRole.Project.Name == request.Data.ProjectName))
+                    .Any(projectRole => projectRole.Project.Name == request.Data.ProjectName
+                        && projectRole.Project.Creator.UserName == request.User.UserName))
                 .Any(user => user.Email == request.Data.Email);
 
             if (isAlreadyInProject)

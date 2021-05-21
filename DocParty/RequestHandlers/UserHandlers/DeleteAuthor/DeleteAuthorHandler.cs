@@ -27,7 +27,8 @@ namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
                 .FirstAsync(user => user.UserName == request.Data.UserName);
 
             UserProjectRole projectRole = user.ProjectRoles
-                .First(projectRole => projectRole.Project.Name == request.Data.ProjectName);
+                .First(projectRole => projectRole.Project.Name == request.Data.ProjectName
+                    && projectRole.Project.Creator.UserName == request.User.UserName);
 
             user.ProjectRoles = user.ProjectRoles.ToList();
             ((List<UserProjectRole>)user.ProjectRoles).Remove(projectRole);
