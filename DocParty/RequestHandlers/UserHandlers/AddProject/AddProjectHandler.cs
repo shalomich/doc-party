@@ -37,16 +37,15 @@ namespace DocParty.RequestHandlers.AddProject
                 return new ErrorResponce(errors);
             }
             
-            var project = new Project(request.Data.Name, request.Data.Description);
-
+            
             Role creatorRole = await RoleManager.FindByNameAsync(Role.Value.Creator.ToString());
              
             var user = await Context.Users
                 .Include(user => user.ProjectRoles)
                 .FirstAsync(user => user.UserName == request.User.UserName);
 
-            project.Creator = user;
-
+            var project = new Project(request.Data.Name, request.Data.Description, user);
+            
             user.ProjectRoles = user.ProjectRoles.ToList();
             ((List<UserProjectRole>)user.ProjectRoles).Add(new UserProjectRole
             {
