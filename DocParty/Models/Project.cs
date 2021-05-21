@@ -16,20 +16,25 @@ namespace DocParty.Models
 
         public Project()
         {
-            var initialSnapshot = new ProjectSnapshot();
             
-            Snapshots = new List<ProjectSnapshot>() 
+        }
+        public Project(string projectName, string description, User creator)
+        {
+            var initialSnapshot = new ProjectSnapshot 
+            {
+                Name = projectName,
+                Description = description,
+                Author = creator
+            };
+
+            Snapshots = new List<ProjectSnapshot>()
             {
                 initialSnapshot
             };
-        }
-        public Project(string projectName, string description) : this()
-        { 
+            
             Name = projectName;
+            Creator = creator;
 
-            var initialSnapshot = Snapshots.First();
-
-            initialSnapshot.Description = description;
         }
         public int Id { set; get; }
         public string Name
