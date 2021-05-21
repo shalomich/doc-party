@@ -1,11 +1,7 @@
 ﻿@using DocParty.Models;
-@model Project
+@model string
 
-@{ 
-    string createSnapshotLocation = $"/{Model.Creator.UserName}/{Model.Name}";
-}
-
-<form action=@createSnapshotLocation method="post">
+<form action=@Model method="post">
     <div class="row">
         <div class="offset-4 col-4">
             <div class="form-group row">

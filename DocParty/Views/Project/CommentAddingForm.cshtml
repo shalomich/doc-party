@@ -1,22 +1,11 @@
-﻿@using DocParty.Models;
-@model Project
+﻿@using DocParty.ViewModel;
+@model CommentAddingFormData
 
-@{
-    string addCommentLocation = $"/{Model.Creator.UserName}/{Model.Name}/comment";
-
-    var snapshotNames = Model.Snapshots.Select(snapshot => snapshot.Name);
-}
-
-<form action=@addCommentLocation method="post">
+<form action=@Model.CommentLocation method="post">
     <div class="form-group row">
         <label for="snapshotName" class="col-2 col-form-label">Snapshot name</label>
         <div class="col-3">
-            <select class="form-control" id="snapshotName" name="snapshotName">
-                @foreach (var snapshotName in snapshotNames)
-                {
-                    <option value=@snapshotName>@snapshotName</option>
-                }
-            </select><br/>
+            @Html.DropDownList("snapshotName",Model.SnapshotChoice)<br/>
         </div>
     </div>
     <div class="form-group row">

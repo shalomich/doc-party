@@ -69,14 +69,17 @@ namespace DocParty.Controllers
 
             IEnumerable<ProjectTableData> data = await _mediator.Send(request);
 
-            var columnReferenceTemplates = new Dictionary<string, string>
-            {
-                {"ProjectName", $"/{route.UserName}/{{0}}" }
-            };
+            string projectLocationTemplate = "/{0}/{1}";
+            string[] projectReferences = data
+                .Select(rowData => String.Format(projectLocationTemplate, rowData.CreatorName, rowData.ProjectName))
+                .ToArray();
 
             var table = new ReferencedTable(
                 new NumberedTable(new ObjectTable<ProjectTableData>(data)),
-                columnReferenceTemplates
+                new Dictionary<string, string[]>
+                {
+                    {"ProjectName",projectReferences}
+                }
             );  
             return View("Projects", new ProjectsInfo {Table = table,UserName = route.UserName});
         }

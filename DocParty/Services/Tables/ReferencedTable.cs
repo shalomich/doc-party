@@ -8,13 +8,17 @@ namespace DocParty.Services.Tables
     public class ReferencedTable : TableDecorator
     {
         public IReadOnlyDictionary<string,string[]> ColumnReferences { get; }
-        public ReferencedTable(ITable table, Dictionary<string,string> columnReferenceTemplates) : base(table)
+        public ReferencedTable(ITable table, Dictionary<string,string[]> columnReferences) : base(table)
         {
-            ColumnReferences = columnReferenceTemplates
-                .Select((columnReferenceTemplate) =>
-                    KeyValuePair.Create(columnReferenceTemplate.Key,
-                        CreateReferences(columnReferenceTemplate.Key, columnReferenceTemplate.Value)))
-                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            foreach (var columnReference in columnReferences)
+            {
+                if (ColumnNames.Contains(columnReference.Key) == false)
+                    throw new ArgumentException();
+                if (columnReference.Value.Length != ((ITable)this).RowCount)
+                    throw new ArgumentException();
+            }
+
+            ColumnReferences = columnReferences;
         }
 
         private string[] CreateReferences(string columnName, string referenceTemplate)

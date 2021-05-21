@@ -61,11 +61,9 @@
                     <strong style="color:blue;font-size:18px">Comments</strong>
                     @foreach (var comment in Model.Comments[i])
                     {
-                        string commentItem = $"{comment.Author.UserName}: {comment.Text}";
-
-                    <div class="row">
-                        @commentItem
-                    </div> 
+                        <div class="row">
+                            @comment
+                        </div> 
                     }
                 </th>
             </tr>

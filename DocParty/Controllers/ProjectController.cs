@@ -2,9 +2,12 @@
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.CommentProject;
 using DocParty.RequestHandlers.ProjectHandlers;
+using DocParty.Services.Tables;
+using DocParty.ViewModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,14 +32,44 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            var request = new HandlerData<Project, Project>
+            var request = new HandlerData<Project, Dictionary<ProjectSnapshotsTableRow,IEnumerable<string>>>
             {
                 Data = _project
             };
 
-            Project projectWithSnapshots = await _mediator.Send(request);
+            Dictionary<ProjectSnapshotsTableRow,IEnumerable<string>> dataAndComments = await _mediator.Send(request);
 
-            return View("Project", projectWithSnapshots);
+            string [] snapshotNames = dataAndComments.Select(data => data.Key.Name).ToArray();
+            string [] snaspshotReferences = dataAndComments.Select(data =>
+                $"{HttpContext.Request.Path}/{data.Key.Name}")
+                .ToArray(); 
+
+            var table = new ReferencedTable(
+                new NumberedTable(new ObjectTable<ProjectSnapshotsTableRow>(dataAndComments
+                    .Select(data => data.Key).ToArray())),
+                new Dictionary<string, string[]>()
+                {
+                    {"Name", snaspshotReferences}
+                }
+            );
+
+            return View("Project", new ProjectInfo 
+            {
+                Name = _project.Name,
+                IsActive = _project.isActive,
+                SnapshotAddingLocation = HttpContext.Request.Path,
+                StateLocation = $"{HttpContext.Request.Path}/state",
+                FormData = new CommentAddingFormData
+                {
+                    CommentLocation = $"{HttpContext.Request.Path}/comment",
+                    SnapshotChoice = new SelectList(snapshotNames)
+                },
+                Data = new ProjectSnapshotsTableData
+                {
+                    Table = table,
+                    Comments = dataAndComments.Select(data => data.Value).ToArray()
+                }
+            });
         }
 
         private async Task Init(ProjectRoute route)

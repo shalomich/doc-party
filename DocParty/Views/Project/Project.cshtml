@@ -1,43 +1,36 @@
-﻿@using DocParty.Models;
-@model Project
+﻿@using DocParty.ViewModel;
+@model ProjectInfo
 
 @{
     Layout = "AppLayout";
 
-    string projectLocation = Context.Request.Path;
-    string projectStateLocation = $"{projectLocation}/state";
-
     string stateButtonText;
 
-    if (Model.isActive)
+    if (Model.IsActive)
         stateButtonText = "Close project";
     else stateButtonText = "Open project";
 
-    string authorsLocation = $"{projectLocation}/authors";
 }
 
 
 <div class="container">
     <div class="row">
-        <div class="col-4">
-            <a href=@authorsLocation>Authors</a>
-        </div>
-        <div class="col-4" style="text-align:center">
+        <div class="offset-4 col-4" style="text-align:center">
             <h1 class="page-header">@Model.Name</h1>
         </div>
         <div class="col" style="position:relative">
-            <form action=@projectStateLocation method="post">
+            <form action=@Model.StateLocation method="post">
                 <button type="submit" class="btn btn-primary" style="position:absolute; right:0px">@stateButtonText</button>
             </form>
         </div>
     </div>
     <div class="row">
-        @await Html.PartialAsync("SnapshotAddingForm", Model)
+        @await Html.PartialAsync("SnapshotAddingForm", Model.SnapshotAddingLocation)
     </div>
     <div class="row">
-        @await Component.InvokeAsync("ProjectSnapshotsTable", Model)
+        @await Html.PartialAsync("ProjectSnapshotsTable", Model.Data)
     </div>
     <div class="row">
-        @await Html.PartialAsync("CommentAddingForm")
+        @await Html.PartialAsync("CommentAddingForm", Model.FormData)
     </div>
 </div>
