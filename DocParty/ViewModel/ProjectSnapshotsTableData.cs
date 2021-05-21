@@ -10,6 +10,6 @@ namespace DocParty.ViewModel
     public class ProjectSnapshotsTableData
     {
         public ReferencedTable Table { set; get; }
-        public IEnumerable<Comment> [] Comments { set; get; }
+        public IEnumerable<string> [] Comments { set; get; }
     }
 }

@@ -9,7 +9,6 @@ namespace DocParty.ViewModel
     {
         public string Name { set; get; }
         public string AuthorName { set; get; }
-
         public string Description { set; get; }
     }
 }

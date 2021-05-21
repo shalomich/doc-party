@@ -1,4 +1,5 @@
 ﻿using DocParty.Models;
+using DocParty.ViewModel;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,23 +10,30 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.ShowProject
 {
-    class ShowProjectHandler : IRequestHandler<HandlerData<Project, Project>, Project>
+    class ShowProjectHandler : IRequestHandler<HandlerData<Project, Dictionary<ProjectSnapshotsTableRow, IEnumerable<string>>>, Dictionary<ProjectSnapshotsTableRow, IEnumerable<string>>>
     {
+        private const string CommentTemplate = "{0}: {1}";
         private ApplicationContext Context { get; }
 
         public ShowProjectHandler(ApplicationContext context)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-
-        public async Task<Project> Handle(HandlerData<Project, Project> request, CancellationToken cancellationToken)
+        public async Task<Dictionary<ProjectSnapshotsTableRow, IEnumerable<string>>> Handle(HandlerData<Project, Dictionary<ProjectSnapshotsTableRow, IEnumerable<string>>> request, CancellationToken cancellationToken)
         {
-            return await Context.Projects
-                .Include(project => project.Creator)
-                .Include(project => project.Snapshots)
-                    .ThenInclude(snapshot => snapshot.Comments)
-                .FirstAsync(project => project.Name == request.Data.Name
-                    && project.Creator.UserName == request.Data.Creator.UserName);
+            return await Context.ProjectShapshots
+             .Include(snapshot => snapshot.Comments)
+             .Where(snapshot => snapshot.Project.Name == request.Data.Name
+                 && snapshot.Project.Creator.UserName == request.Data.Creator.UserName)
+             .ToDictionaryAsync(snapshot =>
+                new ProjectSnapshotsTableRow
+                {
+                    Name = snapshot.Name,
+                    AuthorName = snapshot.Author.UserName,
+                    Description = snapshot.Description,
+                },
+                snapshot => snapshot.Comments.Select(comment => 
+                    String.Format(CommentTemplate, comment.Author.UserName, comment.Text)));
         }
     }
 }
