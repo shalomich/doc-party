@@ -1,4 +1,5 @@
-﻿using DocParty.Models;
+﻿using DocParty.Filters;
+using DocParty.Models;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.CommentProject;
 using DocParty.RequestHandlers.ProjectHandlers;
@@ -17,6 +18,7 @@ namespace DocParty.Controllers
 {
     [Authorize]
     [Route("{userName}/{projectName}")]
+    [NotFoundPageFilter]
     public class ProjectController : Controller
     {
         private readonly IMediator _mediator;

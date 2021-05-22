@@ -1,4 +1,5 @@
-﻿using DocParty.Models;
+﻿using DocParty.Exceptions;
+using DocParty.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,8 +21,13 @@ namespace DocParty.RequestHandlers.UserHandlers.Init
 
         public async Task<User> Handle(HandlerData<UserRoute, User> request, CancellationToken cancellationToken)
         {
-            return await Context.Users
-               .FirstAsync(user => user.UserName == request.Data.UserName);
+            User user = await Context.Users
+               .FirstOrDefaultAsync(user => user.UserName == request.Data.UserName);
+
+            if (user == null)
+                throw new NotFoundException();
+
+            return user;
         }
     }
 }

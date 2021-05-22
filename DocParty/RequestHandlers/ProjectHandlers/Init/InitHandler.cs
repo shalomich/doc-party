@@ -1,4 +1,5 @@
-﻿using DocParty.Models;
+﻿using DocParty.Exceptions;
+using DocParty.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,10 +21,15 @@ namespace DocParty.RequestHandlers.ProjectHandlers.Init
 
         public async Task<Project> Handle(HandlerData<ProjectRoute, Project> request, CancellationToken cancellationToken)
         {
-            return await Context.Projects
+            Project project = await Context.Projects
                .Include(project => project.Creator)
-               .FirstAsync(project => project.Name == request.Data.ProjectName
+               .FirstOrDefaultAsync(project => project.Name == request.Data.ProjectName
                    && project.Creator.UserName == request.Data.UserName);
+
+            if (project == null)
+                throw new NotFoundException();
+
+            return project;
         }
     }
 }
