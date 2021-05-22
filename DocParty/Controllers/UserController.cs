@@ -1,4 +1,5 @@
 ﻿
+using DocParty.Filters;
 using DocParty.Models;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.AddProject;
@@ -23,6 +24,7 @@ namespace DocParty.Controllers
     
     [Authorize]
     [Route("{userName}")]
+    [NotFoundPageFilter]
     public class UserController : Controller
     {
         private readonly IMediator _mediator;
