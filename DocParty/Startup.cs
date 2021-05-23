@@ -74,8 +74,8 @@ namespace DocParty
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("default", "{controller=account}/{action=login}");
                 endpoints.MapControllerRoute("projects", "{userName}/projects");
                 endpoints.MapControllerRoute("user", "{userName}");
             });
