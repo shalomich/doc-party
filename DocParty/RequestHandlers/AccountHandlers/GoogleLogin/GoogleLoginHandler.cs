@@ -24,8 +24,6 @@ namespace DocParty.RequestHandlers.AccountHandlers.GoogleLogin
 
         public async Task<ErrorResponce> Handle(HandlerData<Unit, ErrorResponce> request, CancellationToken cancellationToken)
         {
-            var u  = UserManager.Users.First(u => u.UserName == "Роман Симернин");
-            await UserManager.DeleteAsync(u);
             var errors = new List<string>();
 
             ExternalLoginInfo info = await SignInManager.GetExternalLoginInfoAsync();
