@@ -9,21 +9,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using DocParty.Models;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
 
 namespace DocParty.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IMediator _mediator;
-
-        public AccountController(IMediator mediator)
+        
+        public AccountController(IMediator mediator, SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            _mediator = mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         [Authorize]
         public IActionResult Index()
         {
+            string name = User.Identity.Name;
             return RedirectToRoute("user", new { userName = User.Identity.Name});
         }
  
@@ -77,6 +83,38 @@ namespace DocParty.Controllers
         {
             await _mediator.Send(new LogoutQuery());
             return RedirectToAction(nameof(Login));
+        }
+        public async Task<IActionResult> GoogleConnect()
+        {
+            string redirectUrl = Url.Action(nameof(GoogleLogin), "Account");
+
+            var request = new HandlerData<string, AuthenticationProperties>
+            {
+                Data = redirectUrl
+            };
+
+            var authProperties = await _mediator.Send(request);
+
+            return new ChallengeResult("Google", authProperties);
+        }
+
+        public async Task<IActionResult> GoogleLogin()
+        {
+            var request = new HandlerData<Unit, ErrorResponce>
+            {
+                Data = Unit.Value
+            };
+
+            ErrorResponce registerResponce = await _mediator.Send(request);
+
+            if (registerResponce.Errors.Any() == false)
+                return RedirectToAction(nameof(Index));
+            else
+            {
+                foreach (string message in registerResponce.Errors)
+                    ModelState.AddModelError("", message);
+                return RedirectToAction(nameof(Login));
+            }
         }
     }
 }
