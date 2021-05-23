@@ -7,8 +7,8 @@ namespace DocParty.Models
 {
     public class Comment : IEntity
     {
-        private const int MaxTextLength = 200;
-        private readonly string LengthyTextMessage = $"Length of the comment text must not be more than ${MaxTextLength}";
+        private const int MaxTextLength = 100;
+        private readonly string LengthyTextMessage = $"Length of the comment text must not be more than {MaxTextLength} symbols";
         private readonly string EmptyTextMessage = $"Comment text must not be empty";
 
         private string _text;

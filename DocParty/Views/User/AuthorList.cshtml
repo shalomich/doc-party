@@ -3,13 +3,16 @@
 
 @{ 
     string deleteAuthorLocation = $"{Context.Request.Path}/deletion";
+    int counter = 0;
 }
 
 @foreach (var authorsByProject in Model)
 {
     string projectName = authorsByProject.Key.Name;
 
-    <h3>@projectName</h3>
+    string numberedProject = $"{++counter}) {projectName}";
+
+    <h3>@numberedProject</h3>
     <div class="list-group">
         @foreach (var author in authorsByProject)
         {

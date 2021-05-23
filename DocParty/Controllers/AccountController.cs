@@ -14,6 +14,7 @@ using DocParty.Models;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
+using DocParty.Extensions;
 
 namespace DocParty.Controllers
 {
@@ -44,13 +45,8 @@ namespace DocParty.Controllers
             if (ModelState.IsValid)
             {
                 ErrorResponce loginResponce = await _mediator.Send(loginRequest);
-                if (loginResponce.Errors.Any() == false)
+                if (ModelState.CheckErrors(loginResponce) == false)
                     return RedirectToAction(nameof(Index));
-                else
-                {
-                    foreach (string message in loginResponce.Errors)
-                        ModelState.AddModelError("", message);
-                }
             }
 
             return View(loginRequest);
@@ -68,13 +64,8 @@ namespace DocParty.Controllers
             {
                 ErrorResponce registerResponce = await _mediator.Send(registerRequest);
 
-                if (registerResponce.Errors.Any() == false)
+                if (ModelState.CheckErrors(registerResponce) == false)
                     return RedirectToRoute("user",new { userName = registerRequest.UserName });
-                else
-                {
-                    foreach (string message in registerResponce.Errors)
-                        ModelState.AddModelError("", message);
-                }
             }
             return View(registerRequest);
         }
@@ -105,16 +96,12 @@ namespace DocParty.Controllers
                 Data = Unit.Value
             };
 
-            ErrorResponce registerResponce = await _mediator.Send(request);
+            ErrorResponce responce = await _mediator.Send(request);
 
-            if (registerResponce.Errors.Any() == false)
+            if (ModelState.CheckErrors(responce) == false)
                 return RedirectToAction(nameof(Index));
-            else
-            {
-                foreach (string message in registerResponce.Errors)
-                    ModelState.AddModelError("", message);
-                return RedirectToAction(nameof(Login));
-            }
+            else 
+                return RedirectToAction(nameof(Login));         
         }
     }
 }
