@@ -25,12 +25,12 @@
         </div>
     </div>
     <div class="row">
-        @await Html.PartialAsync("SnapshotAddingForm", Model.SnapshotAddingLocation)
+        @await Html.PartialAsync("SnapshotAddingForm", Model)
     </div>
     <div class="row">
         @await Html.PartialAsync("ProjectSnapshotsTable", Model.Data)
     </div>
     <div class="row">
-        @await Html.PartialAsync("CommentAddingForm", Model.FormData)
+        @await Html.PartialAsync("CommentAddingForm", Model)
     </div>
 </div>

@@ -115,7 +115,7 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            var request = new HandlerData<Project, Unit>
+            var request = new HandlerData<Project, ErrorResponce>
             {
                 Data = _project
             };
