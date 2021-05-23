@@ -1,4 +1,5 @@
-﻿using DocParty.Filters;
+﻿using DocParty.Extensions;
+using DocParty.Filters;
 using DocParty.Models;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.CommentProject;
@@ -30,6 +31,7 @@ namespace DocParty.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        [RestoreModelStateFromTempData]
         public async Task<IActionResult> Show([FromRoute] ProjectRoute route)
         {
             await Init(route);
@@ -86,17 +88,23 @@ namespace DocParty.Controllers
         }
 
         [HttpPost]
+        [SetTempDataModelState]
         public async Task<IActionResult> AddSnapshot([FromForm] SnapshotFormData formData, [FromRoute] ProjectRoute route)
         {
-            await Init(route);
-
-            var request = new ProjectHandlerData<(string UserName, SnapshotFormData FormData), ErrorResponce>
+            if (ModelState.IsValid)
             {
-                Project = _project,
-                Data = (User.Identity.Name,formData)
-            };
+                await Init(route);
 
-            ErrorResponce responce = await _mediator.Send(request);
+                var request = new ProjectHandlerData<(string UserName, SnapshotFormData FormData), ErrorResponce>
+                {
+                    Project = _project,
+                    Data = (User.Identity.Name, formData)
+                };
+
+                ErrorResponce responce = await _mediator.Send(request);
+
+                ModelState.CheckErrors(responce);
+            }
 
             return RedirectToAction(nameof(Show), route);
         }
@@ -107,12 +115,12 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            var request = new HandlerData<Project, ErrorResponce>
+            var request = new HandlerData<Project, Unit>
             {
                 Data = _project
             };
 
-            ErrorResponce responce = await _mediator.Send(request);
+            await _mediator.Send(request);
 
             return RedirectToRoute("Projects", new { userName = route.UserName});
         }
@@ -136,18 +144,24 @@ namespace DocParty.Controllers
 
         [HttpPost]
         [Route("comment")]
+        [SetTempDataModelState]
         public async Task<IActionResult> Comment([FromForm] CommentFormData formData, [FromRoute] ProjectRoute route)
         {
-            await Init(route);
-
-            var request = new ProjectHandlerData<(string UserName, CommentFormData FormData), ErrorResponce>
+            if (ModelState.IsValid)
             {
-                Data = (User.Identity.Name,formData), 
-                Project = _project,
-            };
+                await Init(route);
 
-            ErrorResponce responce = await _mediator.Send(request);
+                var request = new ProjectHandlerData<(string UserName, CommentFormData FormData), ErrorResponce>
+                {
+                    Data = (User.Identity.Name, formData),
+                    Project = _project,
+                };
 
+                ErrorResponce responce = await _mediator.Send(request);
+
+                ModelState.CheckErrors(responce);
+            }
+            
             return RedirectToAction(nameof(Show), route);
 
         }

@@ -1,4 +1,5 @@
 ﻿
+using DocParty.Extensions;
 using DocParty.Filters;
 using DocParty.Models;
 using DocParty.RequestHandlers;
@@ -63,6 +64,7 @@ namespace DocParty.Controllers
         }
 
         [Route("projects")]
+        [RestoreModelStateFromTempData]
         public async Task<IActionResult> ShowProjects([FromRoute] UserRoute route)
         {
             await Init(route);
@@ -88,18 +90,24 @@ namespace DocParty.Controllers
 
         [HttpPost]
         [Route("projects")]
+        [SetTempDataModelState]
         public async Task<IActionResult> AddProject([FromRoute] UserRoute route, [FromForm] SnapshotFormData formData)
         {
-            await Init(route);
-
-            var request = new UserHandlerData<SnapshotFormData, ErrorResponce>
+            if (ModelState.IsValid)
             {
-                User = _user,
-                Data = formData
-            };
+                await Init(route);
 
-            ErrorResponce responce = await _mediator.Send(request);
+                var request = new UserHandlerData<SnapshotFormData, ErrorResponce>
+                {
+                    User = _user,
+                    Data = formData
+                };
 
+                ErrorResponce responce = await _mediator.Send(request);
+
+                ModelState.CheckErrors(responce);
+            }
+            
             return RedirectToRoute("Projects", route);
         }
 
@@ -118,6 +126,7 @@ namespace DocParty.Controllers
         }
 
         [Route("authors")]
+        [RestoreModelStateFromTempData]
         public async Task<IActionResult> ShowAuthors([FromRoute] UserRoute route)
         {
             await Init(route);
@@ -134,17 +143,23 @@ namespace DocParty.Controllers
 
         [Route("authors")]
         [HttpPost]
+        [SetTempDataModelState]
         public async Task<IActionResult> AddAuthor([FromForm] AuthorAddingFormData formData, [FromRoute] UserRoute route)
         {
-            await Init(route);
-
-            var request = new UserHandlerData<AuthorAddingFormData, ErrorResponce>
+            if (ModelState.IsValid)
             {
-                Data = formData,
-                User = _user
-            };
+                await Init(route);
 
-            ErrorResponce responce = await _mediator.Send(request);
+                var request = new UserHandlerData<AuthorAddingFormData, ErrorResponce>
+                {
+                    Data = formData,
+                    User = _user
+                };
+
+                ErrorResponce responce = await _mediator.Send(request);
+
+                ModelState.CheckErrors(responce);
+            }
 
             return RedirectToAction(nameof(ShowAuthors), route);
         }
@@ -155,13 +170,13 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            var request = new UserHandlerData<AuthorDeletingFormData, ErrorResponce>
+            var request = new UserHandlerData<AuthorDeletingFormData, Unit>
             {
                 Data = formData,
                 User = _user
             };
 
-            ErrorResponce responce = await _mediator.Send(request);
+            await _mediator.Send(request);
 
             return RedirectToAction(nameof(ShowAuthors), route);
         }
