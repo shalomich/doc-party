@@ -1,26 +1,24 @@
 using DocParty.Models;
+using DocParty.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using DocParty.Services;
-using DocParty.RequestHandlers.Projects;
+using System.Text;
 
 namespace DocParty
 {
     public class Startup
     {
-        private const string AuthLocationConfigPath = "Locations:Authentication";
+        private const string AuthLocationConfigPath = "Auth:Location";
+        private const string AuthGoogleIdConfigPath = "Auth:Google:Id";
+        private const string AuthGoogleKeyConfigPath = "Auth:Google:Secret";
+
         private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -33,9 +31,24 @@ namespace DocParty
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, Role>(options => options.User.RequireUniqueEmail = true)
+            var builder = new StringBuilder();
+            string russianSymbols = builder.GetRussianSymbols().ToString();
+
+            services.AddIdentity<User, Role>(options => 
+                { 
+                    options.User.RequireUniqueEmail = true;
+                    options.User.AllowedUserNameCharacters = options.User.AllowedUserNameCharacters + russianSymbols;
+                })
                 .AddEntityFrameworkStores<ApplicationContext>();
-            
+
+            services.AddAuthentication()
+                .AddGoogle(opts =>
+                {
+                    opts.ClientId = Configuration[AuthGoogleIdConfigPath];
+                    opts.ClientSecret = Configuration[AuthGoogleKeyConfigPath];
+                    opts.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
@@ -61,8 +74,8 @@ namespace DocParty
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("default", "{controller=account}/{action=login}");
                 endpoints.MapControllerRoute("projects", "{userName}/projects");
                 endpoints.MapControllerRoute("user", "{userName}");
             });
