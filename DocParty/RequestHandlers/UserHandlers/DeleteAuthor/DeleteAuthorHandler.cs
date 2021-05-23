@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
 {
-    class DeleteAuthorHandler : IRequestHandler<UserHandlerData<AuthorDeletingFormData, ErrorResponce>, ErrorResponce>
+    class DeleteAuthorHandler : IRequestHandler<UserHandlerData<AuthorDeletingFormData, Unit>, Unit>
     {
         private ApplicationContext Context { get; }
 
@@ -19,7 +19,7 @@ namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<ErrorResponce> Handle(UserHandlerData<AuthorDeletingFormData, ErrorResponce> request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UserHandlerData<AuthorDeletingFormData, Unit> request, CancellationToken cancellationToken)
         {
             User user = await Context.Users
                 .Include(user => user.ProjectRoles)
@@ -36,7 +36,7 @@ namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
             Context.Users.Update(user);
             await Context.SaveChangesAsync();
 
-            return new ErrorResponce(new List<string>());
+            return Unit.Value;
         }
     }
 }
