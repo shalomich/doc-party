@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,5 +15,8 @@ namespace DocParty.RequestHandlers
 
         [Required]
         public string Description { set; get; }
+
+        [Required]
+        public IFormFile File { set; get; }
     }
 }

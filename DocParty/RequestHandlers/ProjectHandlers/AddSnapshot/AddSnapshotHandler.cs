@@ -1,9 +1,12 @@
 ﻿using DocParty.Models;
 using DocParty.RequestHandlers.ProjectHandlers;
+using DocParty.RequestHandlers.SnapshotHandlers.ShowFile;
+using DocParty.Services.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,10 +18,14 @@ namespace DocParty.RequestHandlers.AddSnapshot
         private const string InvalidSnapshotName = "This snapshot name is belongs to your other snapshot in this project";
         private ApplicationContext Context { get; }
 
-        public AddSnapshotHandler(ApplicationContext context)
+        private IRepository<byte[],string> Repository { get; }
+
+        public AddSnapshotHandler(ApplicationContext context, IRepository<byte[], string> repository)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
+            Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
+
         public async Task<ErrorResponce> Handle(ProjectHandlerData<(string UserName, SnapshotFormData FormData), ErrorResponce> request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();
@@ -47,6 +54,17 @@ namespace DocParty.RequestHandlers.AddSnapshot
 
             await Context.ProjectShapshots.AddAsync(snapshot);
             await Context.SaveChangesAsync();
+
+            byte[] fileBytes;
+            using (var stream = new MemoryStream())
+            {
+                request.Data.FormData.File.CopyTo(stream);
+                fileBytes = stream.ToArray();
+            };
+
+            string fileName = FileData.GetFileName(snapshot.Id.ToString(), request.Project.FileContentType);
+
+            Repository.Create(fileName, fileBytes);
 
             return new ErrorResponce (errors);
         }
