@@ -15,6 +15,7 @@ namespace DocParty.DatabaseConfigs
             builder.ToTable("Projects");
 
             builder.Property(project => project.Name).IsRequired();
+            builder.Property(project => project.FileContentType).IsRequired();
             builder.Property(project => project.Name).HasMaxLength(Project.MaxNameLength);
             builder.Property(project => project.isActive).HasDefaultValue(true);
             builder.HasIndex(project => new {project.Name, project.CreatorId}).IsUnique();

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using MediatR;
 using System.Text;
+using DocParty.Services.Repositories;
 
 namespace DocParty
 {
@@ -58,6 +59,7 @@ namespace DocParty
             services.AddControllersWithViews();
             
             services.AddMediatR(typeof(Startup));
+            services.AddScoped<IRepository<byte[],string>,FileSystemRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -18,7 +18,7 @@ namespace DocParty.Models
         {
             
         }
-        public Project(string projectName, string description, User creator)
+        public Project(string projectName, string description, string fileContentType, User creator)
         {
             var initialSnapshot = new ProjectSnapshot 
             {
@@ -33,8 +33,8 @@ namespace DocParty.Models
             };
             
             Name = projectName;
+            FileContentType = fileContentType;
             Creator = creator;
-
         }
         public int Id { set; get; }
         public string Name
@@ -54,6 +54,8 @@ namespace DocParty.Models
                 return _name;
             }
         }
+
+        public string FileContentType { set; get; }
         public bool isActive { set; get; } = true;
         public User Creator { set; get; }
         public int? CreatorId { set; get; }
