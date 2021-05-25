@@ -149,7 +149,7 @@ namespace DocParty.Controllers
         {
             await Init(route);
 
-            var request = new UserNotificationData<AuthorAddingFormData>
+            var request = new UserHandlerData<AuthorAddingFormData>
             {
                 Data = formData,
                 User = _user
