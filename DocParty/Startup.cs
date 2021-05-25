@@ -59,7 +59,7 @@ namespace DocParty
             services.AddControllersWithViews();
             
             services.AddMediatR(typeof(Startup));
-            services.AddScoped<IRepository<byte[],string>,FileSystemRepository>();
+            services.AddScoped<IRepository<byte[],string>,AwsS3FileRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
