@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocParty.RequestHandlers.UserHandlers.AddAuthor
+namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
 {
     public class AuthorAddingFormData
     {

@@ -11,6 +11,8 @@ using System;
 using MediatR;
 using System.Text;
 using DocParty.Services.Repositories;
+using DocParty.Services.Email;
+using DocParty.Services;
 
 namespace DocParty
 {
@@ -60,6 +62,9 @@ namespace DocParty
             
             services.AddMediatR(typeof(Startup));
             services.AddScoped<IRepository<byte[],string>,AwsS3FileRepository>();
+            services.AddScoped<AuthorAssignService>();
+            services.AddScoped<EmailSender>();
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
