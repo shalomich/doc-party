@@ -15,7 +15,8 @@ namespace DocParty.RequestHandlers.AddSnapshot
 {
     class AddSnapshotHandler : IRequestHandler<ProjectHandlerData<(string UserName,SnapshotFormData FormData), ErrorResponce>, ErrorResponce>
     {
-        private const string InvalidSnapshotName = "This snapshot name is belongs to your other snapshot in this project";
+        private const string InvalidSnapshotNameMessage = "This snapshot name is belongs to your other snapshot in this project";
+        private const string InvalidExtensionMessage = "This file has other extension";
         private ApplicationContext Context { get; }
 
         private IRepository<byte[],string> Repository { get; }
@@ -37,7 +38,15 @@ namespace DocParty.RequestHandlers.AddSnapshot
 
             if (isExist)
             {
-                errors.Add(InvalidSnapshotName);
+                errors.Add(InvalidSnapshotNameMessage);
+                return new ErrorResponce(errors);
+            }
+
+            bool hasOtherContentType = request.Project.FileContentType != request.Data.FormData.File.ContentType;
+            
+            if (hasOtherContentType) 
+            {
+                errors.Add(InvalidExtensionMessage);
                 return new ErrorResponce(errors);
             }
 
