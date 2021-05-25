@@ -2,13 +2,14 @@
 using DocParty.Extensions;
 using DocParty.Filters;
 using DocParty.Models;
+using DocParty.NotificationHandlers.UserHandlers;
+using DocParty.NotificationHandlers.UserHandlers.AddAuthor;
 using DocParty.RequestHandlers;
 using DocParty.RequestHandlers.AddProject;
 using DocParty.RequestHandlers.Profile;
 using DocParty.RequestHandlers.Projects;
 using DocParty.RequestHandlers.ShowSnapshots;
 using DocParty.RequestHandlers.UserHandlers;
-using DocParty.RequestHandlers.UserHandlers.AddAuthor;
 using DocParty.RequestHandlers.UserHandlers.DeleteAuthor;
 using DocParty.Services.Tables;
 using DocParty.ViewModel;
@@ -144,23 +145,17 @@ namespace DocParty.Controllers
 
         [Route("authors")]
         [HttpPost]
-        [SetTempDataModelState]
         public async Task<IActionResult> AddAuthor([FromForm] AuthorAddingFormData formData, [FromRoute] UserRoute route)
         {
-            if (ModelState.IsValid)
+            await Init(route);
+
+            var request = new UserHandlerData<AuthorAddingFormData>
             {
-                await Init(route);
+                Data = formData,
+                User = _user
+            };
 
-                var request = new UserHandlerData<AuthorAddingFormData, ErrorResponce>
-                {
-                    Data = formData,
-                    User = _user
-                };
-
-                ErrorResponce responce = await _mediator.Send(request);
-
-                ModelState.CheckErrors(responce);
-            }
+            await _mediator.Publish(request);
 
             return RedirectToAction(nameof(ShowAuthors), route);
         }
