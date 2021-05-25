@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
 {
-    class AddAuthorHandler : INotificationHandler<UserNotificationData<AuthorAddingFormData>>
+    class AddAuthorHandler : INotificationHandler<UserHandlerData<AuthorAddingFormData>>
     {
         private ApplicationContext Context { get; }
         private AuthorAssignService AssignService { get; }
@@ -23,7 +23,7 @@ namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
             AssignService = assignService ?? throw new ArgumentNullException(nameof(assignService));
         }
 
-        public async Task Handle(UserNotificationData<AuthorAddingFormData> notification, CancellationToken cancellationToken)
+        public async Task Handle(UserHandlerData<AuthorAddingFormData> notification, CancellationToken cancellationToken)
         {
             Project project = await Context.Projects
                 .FirstAsync(project => project.Name == notification.Data.ProjectName
