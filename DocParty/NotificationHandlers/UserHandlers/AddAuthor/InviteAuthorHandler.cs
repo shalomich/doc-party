@@ -10,21 +10,21 @@ using System.Threading.Tasks;
 
 namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
 {
-    class InviteAuthorNotification : INotificationHandler<UserNotificationData<AuthorAddingFormData>>
+    class InviteAuthorHandler : INotificationHandler<UserHandlerData<AuthorAddingFormData>>
     {
         private const string ProjectLocationTemplate = "https://localhost:44380/{0}/{1}";
         private ApplicationContext Context { get; }
         private EmailSender EmailSender { get; }
 
-        public InviteAuthorNotification(ApplicationContext context, EmailSender emailSender)
+        public InviteAuthorHandler(ApplicationContext context, EmailSender emailSender)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
             EmailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
         }
 
-        public async Task Handle(UserNotificationData<AuthorAddingFormData> notification, CancellationToken cancellationToken)
+        public async Task Handle(UserHandlerData<AuthorAddingFormData> notification, CancellationToken cancellationToken)
         {
-            /*User user = await Context.Users
+            User user = await Context.Users
                 .Include(user => user.ProjectRoles)
                 .FirstOrDefaultAsync(user => user.Email == notification.Data.Email);
 
@@ -34,7 +34,7 @@ namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
                 var builder = new ProjectInviteBuilder("");
                 var creator = new EmailMessageCreator(builder);
                 await EmailSender.SendEmailAsync(notification.Data.Email, creator.Create());
-            }*/
+            }
         }
     }
 }

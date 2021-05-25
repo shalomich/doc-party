@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.NotificationHandlers.UserHandlers
 {
-    public class UserNotificationData<T> : NotificationData<T>
+    public class UserHandlerData<T> : HandlerData<T>
     {
         public User User {set;get;}
     }
