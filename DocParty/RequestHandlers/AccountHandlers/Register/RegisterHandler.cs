@@ -1,5 +1,6 @@
 ﻿using DocParty.Models;
 using DocParty.RequestHandlers;
+using DocParty.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -15,12 +16,15 @@ namespace DocParty.RequestHandlers.Account.Register
         
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly AuthorAssignService _assignService;
 
-        public RegisterHandler(UserManager<User> userManager, SignInManager<User> signInManager)
+        public RegisterHandler(UserManager<User> userManager, SignInManager<User> signInManager, AuthorAssignService assignService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+            _assignService = assignService ?? throw new ArgumentNullException(nameof(assignService));
         }
+
         public async Task<ErrorResponce> Handle(RegistrationCommand request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();
@@ -32,6 +36,7 @@ namespace DocParty.RequestHandlers.Account.Register
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
+                await _assignService.CheckRegisteredUser(user.Email);
             }
             else
             {
