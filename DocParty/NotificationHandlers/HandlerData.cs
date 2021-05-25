@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocParty.NotificationHandlers
 {
-    public class NotificationData<T> : INotification
+    public class HandlerData<T> : INotification
     {
         public T Data { set; get; }
     }
