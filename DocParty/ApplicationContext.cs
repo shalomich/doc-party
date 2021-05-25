@@ -17,6 +17,7 @@ namespace DocParty
         public DbSet<Project> Projects { set; get; }
         public DbSet<ProjectSnapshot> ProjectShapshots { set; get; }
         public DbSet<Comment> Comments { set; get; }
+        public DbSet<UnauthorizedAuthor> UnauthorizedAuthors { set; get; }
 
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
@@ -30,8 +31,8 @@ namespace DocParty
             modelBuilder.ApplyConfiguration(new ProjectDbConfig());
             modelBuilder.ApplyConfiguration(new ProjectSnapshotDbConfig());
             modelBuilder.ApplyConfiguration(new CommentDbConfig());
+            modelBuilder.ApplyConfiguration(new UnauthorizedAuthorDbConfig());
 
-            
             modelBuilder.Entity<User>(
                 user => user
                     .HasMany(user => user.ProjectRoles)
