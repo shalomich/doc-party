@@ -12,12 +12,10 @@ namespace DocParty.Services
     class AuthorAssignService
     {
         private ApplicationContext Context { get; }
-        private RoleManager<Role> RoleManager { get; }
-
+        
         public AuthorAssignService(ApplicationContext context, RoleManager<Role> roleManager)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            RoleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         }
 
         public async Task Assign(UnauthorizedAuthor author)
@@ -38,7 +36,7 @@ namespace DocParty.Services
 
             if (user != null)
             {
-                Role authorRole = await RoleManager.FindByNameAsync(Role.Value.Author.ToString());
+                Role authorRole = await Context.Roles.FirstAsync(role => role.Name == Role.Value.Author.ToString());
 
                 var projectRole = new UserProjectRole
                 {

@@ -32,6 +32,8 @@ namespace DocParty.Controllers
         }
 
         [RestoreModelStateFromTempData]
+        [TypeFilter(typeof(ProjectAuthorizeFilter), 
+            Arguments = new object[] { new Role.Value[] {Role.Value.Creator,Role.Value.Author} })]
         public async Task<IActionResult> Show([FromRoute] ProjectRoute route)
         {
             await Init(route);
@@ -89,6 +91,8 @@ namespace DocParty.Controllers
 
         [HttpPost]
         [SetTempDataModelState]
+        [TypeFilter(typeof(ProjectAuthorizeFilter),
+            Arguments = new object[] { new Role.Value[] { Role.Value.Creator, Role.Value.Author } })]
         public async Task<IActionResult> AddSnapshot([FromForm] SnapshotFormData formData, [FromRoute] ProjectRoute route)
         {
             if (ModelState.IsValid)
@@ -111,6 +115,8 @@ namespace DocParty.Controllers
 
         [HttpPost]
         [Route("deletion")]
+        [TypeFilter(typeof(ProjectAuthorizeFilter),
+            Arguments = new object[] { new Role.Value[] { Role.Value.Creator} })]
         public async Task<IActionResult> Delete([FromRoute] ProjectRoute route)
         {
             await Init(route);
@@ -127,7 +133,8 @@ namespace DocParty.Controllers
 
         [HttpPost]
         [Route("state")]
-        
+        [TypeFilter(typeof(ProjectAuthorizeFilter),
+            Arguments = new object[] { new Role.Value[] { Role.Value.Creator} })]
         public async Task<IActionResult> ChangeState([FromRoute] ProjectRoute route)
         {
             await Init(route);
@@ -145,6 +152,8 @@ namespace DocParty.Controllers
         [HttpPost]
         [Route("comment")]
         [SetTempDataModelState]
+        [TypeFilter(typeof(ProjectAuthorizeFilter),
+            Arguments = new object[] { new Role.Value[] { Role.Value.Creator, Role.Value.Author } })]
         public async Task<IActionResult> Comment([FromForm] CommentFormData formData, [FromRoute] ProjectRoute route)
         {
             if (ModelState.IsValid)

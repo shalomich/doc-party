@@ -18,13 +18,11 @@ namespace DocParty.RequestHandlers.AddProject
     {
         private const string InvalidProjectName = "This project name is belongs to your other project";
         private ApplicationContext Context { get; }
-        private RoleManager<Role> RoleManager { get; }
         private IRepository<byte[],string> Repository { get; }
 
         public AddProjectHandler(ApplicationContext context, RoleManager<Role> roleManager, IRepository<byte[], string> repository)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            RoleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
             Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
@@ -43,7 +41,7 @@ namespace DocParty.RequestHandlers.AddProject
             }
             
             
-            Role creatorRole = await RoleManager.FindByNameAsync(Role.Value.Creator.ToString());
+            Role creatorRole = await Context.Roles.FirstAsync(role => role.Name == Role.Value.Creator.ToString());
              
             var user = await Context.Users
                 .Include(user => user.ProjectRoles)

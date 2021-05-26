@@ -24,7 +24,7 @@ namespace DocParty.RequestHandlers.Delete
 
         public async Task<ErrorResponce> Handle(HandlerData<Project, ErrorResponce> request, CancellationToken cancellationToken)
         {
-            var project = Context.ProjectShapshots
+            await Context.ProjectShapshots
                 .Where(snapshot => snapshot.ProjectId == request.Data.Id)
                 .ForEachAsync(snapshot =>
                 {

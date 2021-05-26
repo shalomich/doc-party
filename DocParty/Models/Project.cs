@@ -60,7 +60,7 @@ namespace DocParty.Models
         public User Creator { set; get; }
         public int? CreatorId { set; get; }
         public IEnumerable<UserProjectRole> AuthorRoles { set; get; }
-        public IEnumerable<ProjectSnapshot> Snapshots { get; }
+        public List<ProjectSnapshot> Snapshots { get; }
 
     }
 }

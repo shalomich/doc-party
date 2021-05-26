@@ -10,7 +10,7 @@ using DocParty.DatabaseConfigs;
 
 namespace DocParty
 {
-    class ApplicationContext : IdentityDbContext<User, Role, int,
+    public class ApplicationContext : IdentityDbContext<User, Role, int,
         IdentityUserClaim<int>, UserProjectRole, IdentityUserLogin<int>,
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
@@ -47,6 +47,14 @@ namespace DocParty
                     .WithOne(projectRole => projectRole.Role)
                     .HasForeignKey(projectRole => projectRole.RoleId)
                     .IsRequired()
+            );
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role[]
+                {
+                    new Role {Id = 1, Name = Role.Value.Creator.ToString()},
+                    new Role {Id = 2, Name = Role.Value.Author.ToString()}
+                }
             );
 
             modelBuilder.Entity<UserProjectRole>()

@@ -51,8 +51,10 @@ namespace DocParty.Controllers
         public async Task<IActionResult> DownloadFile(SnapshotRoute route)
         {
             FileData data = await GetFile(route);
+
+            string fileName = FileData.GetFileName(_snapshot.Name, data.ContentType);
             
-            return File(data.Bytes, data.ContentType, _snapshot.Name);
+            return File(data.Bytes, data.ContentType, fileName);
         }
 
         private async Task<FileData> GetFile(SnapshotRoute route)
