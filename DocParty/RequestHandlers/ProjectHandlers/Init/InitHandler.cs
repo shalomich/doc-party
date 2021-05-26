@@ -19,6 +19,15 @@ namespace DocParty.RequestHandlers.ProjectHandlers.Init
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        /// <summary>
+        /// Find project by his name and creator name.
+        /// </summary>
+        /// <param name="request">User name and project name.</param>
+        /// <returns>Project.</returns>
+        /// <exception cref="DocParty.Exceptions.NotFoundException">
+        /// If project with same name and creator name is not exist throw exception
+        /// which be handle by NotFoundPageFilter.
+        /// </exception>
         public async Task<Project> Handle(HandlerData<ProjectRoute, Project> request, CancellationToken cancellationToken)
         {
             Project project = await Context.Projects

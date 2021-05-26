@@ -23,6 +23,14 @@ namespace DocParty.RequestHandlers.Account.Login
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
         }
 
+        /// <summary>
+        /// Login user. 
+        /// </summary>
+        /// <param name="request">Email and password.</param>
+        /// <returns>
+        /// If login data has invalid email or password return concrete error
+        /// else return empty error responce.
+        /// </returns>
         public async Task<ErrorResponce> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();

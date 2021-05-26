@@ -19,6 +19,12 @@ namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
+        /// <summary>
+        /// Delete author from project.
+        /// </summary>
+        /// <param name="request">Author name and project name.</param>
+        /// <returns> Nothing.</returns>
         public async Task<Unit> Handle(UserHandlerData<AuthorDeletingFormData, Unit> request, CancellationToken cancellationToken)
         {
             User user = await Context.Users
@@ -30,6 +36,7 @@ namespace DocParty.RequestHandlers.ProjectHandlers.DeleteAuthor
                 .First(projectRole => projectRole.Project.Name == request.Data.ProjectName
                     && projectRole.Project.Creator.UserName == request.User.UserName);
 
+            /// Deleting user role author for current project. 
             user.ProjectRoles = user.ProjectRoles.ToList();
             ((List<UserProjectRole>)user.ProjectRoles).Remove(projectRole);
 

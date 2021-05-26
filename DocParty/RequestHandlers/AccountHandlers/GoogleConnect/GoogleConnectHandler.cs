@@ -19,6 +19,11 @@ namespace DocParty.RequestHandlers.AccountHandlers.GoogleConnect
             SignInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
         }
 
+        /// <summary>
+        /// Get google auth properties.
+        /// </summary>
+        /// <param name="request"> Redirect url.</param>
+        /// <returns>Google auth properties.</returns>
         public Task<AuthenticationProperties> Handle(HandlerData<string, AuthenticationProperties> request, CancellationToken cancellationToken)
         {
             string redirectUrl = request.Data;

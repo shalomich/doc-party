@@ -25,6 +25,14 @@ namespace DocParty.RequestHandlers.Account.Register
             _assignService = assignService ?? throw new ArgumentNullException(nameof(assignService));
         }
 
+        /// <summary>
+        /// Create new account.
+        /// </summary>
+        /// <param name="request"> User name, email and password.</param>
+        /// If username and email is unique and password is correct return empty error responce 
+        /// else return concrete error.
+        /// </returns>
+
         public async Task<ErrorResponce> Handle(RegistrationCommand request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();

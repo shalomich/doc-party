@@ -22,6 +22,10 @@ namespace DocParty.RequestHandlers.Delete
             Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        /// <summary>
+        /// Delete project from database and delete all snapshot file from repository.
+        /// </summary>
+        /// <param name="request">Project.</param>
         public async Task<ErrorResponce> Handle(HandlerData<Project, ErrorResponce> request, CancellationToken cancellationToken)
         {
             await Context.ProjectShapshots
@@ -30,6 +34,8 @@ namespace DocParty.RequestHandlers.Delete
                 {
                     var thread = new Thread(new ThreadStart(() => 
                     {
+                        // Make file name base on his name and content type.
+                        // For example, GetFileName("1", "text/plain") = "1.txt"
                         string fileName = FileData.GetFileName(snapshot.Id.ToString(), request.Data.FileContentType);
                         Repository.Delete(fileName);
                     }));

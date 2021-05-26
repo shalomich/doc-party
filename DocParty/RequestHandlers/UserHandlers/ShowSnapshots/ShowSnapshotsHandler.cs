@@ -16,6 +16,12 @@ namespace DocParty.RequestHandlers.ShowSnapshots
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
+        /// <summary>
+        /// Get data about snapshot that will be in table.
+        /// </summary>
+        /// <param name="request">User.</param>
+        /// <returns>Collection of table row data.</returns>
         public async Task<IEnumerable<SnapshotTableData>> Handle(HandlerData<User, IEnumerable<SnapshotTableData>> request, CancellationToken cancellationToken)
         {
             return await Context.ProjectShapshots

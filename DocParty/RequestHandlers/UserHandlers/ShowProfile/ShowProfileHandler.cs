@@ -19,6 +19,12 @@ namespace DocParty.RequestHandlers.Profile
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        /// <summary>
+        /// Get user project statistics.
+        /// </summary>
+        /// <param name="request">User.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>User project statistics.</returns>
         public async Task<UserStatistics> Handle(HandlerData<User, UserStatistics> request, CancellationToken cancellationToken)
         {
             string userName = request.Data.UserName;

@@ -17,6 +17,12 @@ namespace DocParty.RequestHandlers.SnapshotHandlers.ShowFileHandler
             Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        /// <summary>
+        /// Get file for snapshot from repository.
+        /// </summary>
+        /// <param name="request">Snapshot.</param>
+        /// <returns>Array of file bytes and file content type.</returns>
+
         public async Task<FileData> Handle(HandlerData<ProjectSnapshot, FileData> request, CancellationToken cancellationToken)
         {
             

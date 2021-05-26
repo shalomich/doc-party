@@ -19,6 +19,15 @@ namespace DocParty.RequestHandlers.UserHandlers.Init
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        /// <summary>
+        /// Find user by his username.
+        /// </summary>
+        /// <param name="request">Username.</param>
+        /// <returns>User.</returns>
+        /// <exception cref="DocParty.Exceptions.NotFoundException">
+        /// If user with same name is not exist throw exception
+        /// which be handle by NotFoundPageFilter.
+        /// </exception>
         public async Task<User> Handle(HandlerData<UserRoute, User> request, CancellationToken cancellationToken)
         {
             User user = await Context.Users

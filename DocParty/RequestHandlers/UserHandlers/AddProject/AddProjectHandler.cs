@@ -26,6 +26,15 @@ namespace DocParty.RequestHandlers.AddProject
             Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        /// <summary>
+        /// Creation new project in database and saving project file in repository
+        /// </summary>
+        /// <param name="request">User, project name, desciption and file.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>
+        /// If project with same name is exist return error
+        /// else return empty error responce.
+        /// </returns>
         public async Task<ErrorResponce> Handle(UserHandlerData<SnapshotFormData, ErrorResponce> request, CancellationToken cancellationToken)
         { 
             var errors = new List<string>();
@@ -49,6 +58,7 @@ namespace DocParty.RequestHandlers.AddProject
 
             var project = new Project(request.Data.Name, request.Data.Description, request.Data.File.ContentType, user);
             
+            // Adding for user role creator for current project.
             user.ProjectRoles = user.ProjectRoles.ToList();
             ((List<UserProjectRole>)user.ProjectRoles).Add(new UserProjectRole
             {
@@ -59,6 +69,7 @@ namespace DocParty.RequestHandlers.AddProject
             Context.Users.Update(user);
             await Context.SaveChangesAsync();
 
+            // Convert file to byte array.
             byte[] fileBytes;
             using (var stream = new MemoryStream())
             {
@@ -66,6 +77,8 @@ namespace DocParty.RequestHandlers.AddProject
                 fileBytes = stream.ToArray();
             };
 
+            // Make file name base on his name and content type.
+            // For example, GetFileName("1", "text/plain") = "1.txt"
             string fileName = FileData.GetFileName(project.Snapshots.First().Id.ToString(), project.FileContentType);
 
             Repository.Create(fileName, fileBytes);
