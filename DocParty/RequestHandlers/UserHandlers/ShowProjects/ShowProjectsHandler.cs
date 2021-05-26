@@ -19,6 +19,11 @@ namespace DocParty.RequestHandlers.Projects
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
         
+        /// <summary>
+        /// Get data about project that will be in table.
+        /// </summary>
+        /// <param name="request">User.</param>
+        /// <returns>Collection of table row data.</returns>
         public async Task<IEnumerable<ProjectTableData>> Handle(HandlerData<User, IEnumerable<ProjectTableData>> request, CancellationToken cancellationToken)
         {
             return await Context.Projects

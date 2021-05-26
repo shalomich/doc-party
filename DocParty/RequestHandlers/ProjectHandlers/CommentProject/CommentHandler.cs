@@ -18,6 +18,15 @@ namespace DocParty.RequestHandlers.ProjectHandlers.CommentProject
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
+        /// <summary>
+        /// Add new comment for snapshot.
+        /// </summary>
+        /// <param name="request">Author name, snapshot name and text of comment.</param>
+        /// <returns>
+        /// If size of comment text so big then return error
+        /// else return empty error responce.
+        /// </returns>
         public async Task<ErrorResponce> Handle(ProjectHandlerData<(string UserName, CommentFormData FormData), ErrorResponce> request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();

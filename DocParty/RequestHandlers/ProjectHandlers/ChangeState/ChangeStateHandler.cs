@@ -17,6 +17,12 @@ namespace DocParty.RequestHandlers.ChangeState
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
+        /// <summary>
+        /// Close or open project.
+        /// </summary>
+        /// <param name="request">Project.</param>
+        /// <returns>Nothing.</returns>
         public async Task<Unit> Handle(HandlerData<Project, Unit> request, CancellationToken cancellationToken)
         {
             Project project = request.Data;

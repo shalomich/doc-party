@@ -22,6 +22,15 @@ namespace DocParty.RequestHandlers.AccountHandlers.GoogleLogin
             UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
+        /// <summary>
+        /// If user is registered then login
+        /// else create new account.
+        /// </summary>
+        /// <param name="request">Nothing.</param>
+        /// <returns>
+        /// If user is registered or registration is successful then empty error responce
+        /// else concrete error.
+        /// </returns>
         public async Task<ErrorResponce> Handle(HandlerData<Unit, ErrorResponce> request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();

@@ -27,6 +27,14 @@ namespace DocParty.RequestHandlers.AddSnapshot
             Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        /// <summary>
+        /// Add new verison for current project.
+        /// </summary>
+        /// <param name="request">Author name, snapshot name, description and file.</param>
+        /// <returns>
+        /// If snapshot name is exist or file has other extension then return error
+        /// else return empty error responce.
+        /// </returns>
         public async Task<ErrorResponce> Handle(ProjectHandlerData<(string UserName, SnapshotFormData FormData), ErrorResponce> request, CancellationToken cancellationToken)
         {
             var errors = new List<string>();
@@ -64,6 +72,7 @@ namespace DocParty.RequestHandlers.AddSnapshot
             await Context.ProjectShapshots.AddAsync(snapshot);
             await Context.SaveChangesAsync();
 
+            // Convert file to byre array.
             byte[] fileBytes;
             using (var stream = new MemoryStream())
             {
@@ -71,6 +80,8 @@ namespace DocParty.RequestHandlers.AddSnapshot
                 fileBytes = stream.ToArray();
             };
 
+            // Make file name base on his name and content type.
+            // For example, GetFileName("1", "text/plain") = "1.txt"
             string fileName = FileData.GetFileName(snapshot.Id.ToString(), request.Project.FileContentType);
 
             Repository.Create(fileName, fileBytes);

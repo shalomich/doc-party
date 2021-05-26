@@ -17,6 +17,12 @@ namespace DocParty.RequestHandlers.UserHandlers.ShowAuthors
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
+        /// <summary>
+        /// Find author to projects of current user.
+        /// </summary>
+        /// <param name="request">User.</param>
+        /// <returns>Authors are grouping by projects.</returns>
         public async Task<ILookup<Project, User>> Handle(HandlerData<User, ILookup<Project, User>> request, CancellationToken cancellationToken)
         {
             User creator = request.Data;

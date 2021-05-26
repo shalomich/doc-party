@@ -19,6 +19,15 @@ namespace DocParty.RequestHandlers.ShowProject
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
         }
+
+        /// <summary>
+        /// Get comment and table data for each snapshot in project.
+        /// </summary>
+        /// <param name="request">Project.</param>
+        /// <returns>
+        /// Dictionary where key is table row data,
+        /// value is collection of comment texts.
+        /// </returns>
         public async Task<Dictionary<ProjectSnapshotsTableRow, IEnumerable<string>>> Handle(HandlerData<Project, Dictionary<ProjectSnapshotsTableRow, IEnumerable<string>>> request, CancellationToken cancellationToken)
         {
             return await Context.ProjectShapshots

@@ -18,6 +18,10 @@ namespace DocParty.RequestHandlers.Logout
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
         }
 
+        /// <summary>
+        /// Sign out from account.
+        /// </summary>
+        /// <returns>Nothing.</returns>
         public async Task<Unit> Handle(LogoutQuery request, CancellationToken cancellationToken)
         {
             await _signInManager.SignOutAsync();
