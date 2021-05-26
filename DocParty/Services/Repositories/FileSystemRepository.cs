@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Services.Repositories
 {
+    /// <summary>
+    /// Repository for file that keep them in file system.
+    /// </summary>
     class FileSystemRepository : IRepository<byte[], string>
     {
         private readonly string RooteFilePath;

@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace DocParty.Services.Tables
 {
+    /// <summary>
+    /// Table thar from object make table 
+    /// where columns are property names
+    /// and rows are object values.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ObjectTable<T> : ITable where T : class
     {
         private readonly string[,] _values;
