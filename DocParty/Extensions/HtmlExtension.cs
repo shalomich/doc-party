@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Extensions
 {
+    /// <summary>
+    /// Assign attribure disabled for html element dependent condition.
+    /// </summary>
     public static class HtmlExtensions
     {
         public static IHtmlContent DisabledIf(this IHtmlHelper htmlHelper,

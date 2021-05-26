@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Filters
 {
+    /// <summary>
+    /// Filter that handle NotFoundException and return 404 status.
+    /// </summary>
     public class NotFoundPageFilter : Attribute, IExceptionFilter
     {
         public void OnException(ExceptionContext context)
