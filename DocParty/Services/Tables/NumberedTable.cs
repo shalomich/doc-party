@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Services.Tables
 {
+    /// <summary>
+    /// Table that add column with row numbers.
+    /// </summary>
     public class NumberedTable : TableDecorator
     {
         private const string NumberingColumnName = "Number";

@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Services.Repositories
 {
+    /// <summary>
+    /// Repository for files that keep them on aws s3 storage.
+    /// </summary>
     class AwsS3FileRepository : IRepository<byte[],string>
     {
         private static readonly RegionEndpoint Region = RegionEndpoint.EUNorth1;

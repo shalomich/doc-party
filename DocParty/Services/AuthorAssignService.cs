@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Services
 {
+    /// <summary>
+    /// Service that assign user to other project.
+    /// </summary>
     class AuthorAssignService
     {
         private ApplicationContext Context { get; }
@@ -20,6 +23,12 @@ namespace DocParty.Services
             RoleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         }
 
+        /// <summary>
+        /// Assign author to project but if author is not registered
+        /// add his email to database to assign him later.
+        /// </summary>
+        /// <param name="author">Author email and project.</param>
+        /// <returns></returns>
         public async Task Assign(UnauthorizedAuthor author)
         {
             bool isAlreadyInProject = Context.Users
@@ -67,6 +76,10 @@ namespace DocParty.Services
             }
         }
 
+        /// <summary>
+        /// Check that if just now registred user has project invites
+        /// before his registration then became an author to these projects.
+        /// </summary>
         public async Task CheckRegisteredUser(string email)
         {
             var unauthorizedAuthorProjects = Context.UnauthorizedAuthors

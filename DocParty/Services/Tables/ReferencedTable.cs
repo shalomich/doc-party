@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Services.Tables
 {
+    /// <summary>
+    /// Table that make reference and match it to column.
+    /// </summary>
     public class ReferencedTable : TableDecorator
     {
         public IReadOnlyDictionary<string,string[]> ColumnReferences { get; }
