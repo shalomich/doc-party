@@ -15,13 +15,25 @@ using System.Threading.Tasks;
 
 namespace DocParty.Controllers
 {
+    /// <summary>
+    /// MVC controller is responsible for user actions 
+    /// for the concrete snapshot in concreate project. 
+    /// </summary>
+ 
     [Authorize]
     [Route("{userName}/{projectName}/{snapshotName}")]
     [NotFoundPageFilter]
     public class SnapshotController : Controller
     {
+        /// <summary>
+        /// Snapshot of user project identified by route.
+        /// </summary>
         private ProjectSnapshot _snapshot;
 
+        /// <summary>
+        /// Service for transfer responsibility from controllers
+        /// to request or notification handlers.
+        /// </summary>
         private IMediator _mediator;
 
         public SnapshotController(IMediator mediator)
@@ -29,6 +41,10 @@ namespace DocParty.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// Initialize field _snapshot.
+        /// </summary>
+        /// <param name="route">User name, project name and snapshot name.</param>
         private async Task Init(SnapshotRoute route)
         {
             var request = new HandlerData<SnapshotRoute, ProjectSnapshot>
@@ -39,12 +55,22 @@ namespace DocParty.Controllers
             _snapshot = await _mediator.Send(request);
         }
 
+        /// <summary>
+        /// Show snapshot file.
+        /// </summary>
+        /// <param name="route">User name, project name and snapshot name.</param>
+
         public async Task<IActionResult> ShowFile(SnapshotRoute route)
         {
             FileData data = await GetFile(route);
 
             return File(data.Bytes,data.ContentType);
         }
+
+        /// <summary>
+        /// Download snapshot file.
+        /// </summary>
+        /// <param name="route">User name, project name and snapshot name.</param>
 
         [Route("download")]
         [HttpPost]
@@ -56,6 +82,11 @@ namespace DocParty.Controllers
             
             return File(data.Bytes, data.ContentType, fileName);
         }
+
+        /// <summary>
+        /// Get snapshot file.
+        /// </summary>
+        /// <param name="route">User name, project name and snapshot name.</param>
 
         private async Task<FileData> GetFile(SnapshotRoute route)
         {

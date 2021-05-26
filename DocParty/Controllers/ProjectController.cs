@@ -17,13 +17,25 @@ using System.Threading.Tasks;
 
 namespace DocParty.Controllers
 {
+    /// <summary>
+    /// MVC controller is responsible for user actions 
+    /// for the concrete project. 
+    /// </summary>
+    /// 
     [Authorize]
     [Route("{userName}/{projectName}")]
     [NotFoundPageFilter]
     public class ProjectController : Controller
     {
+        /// <summary>
+        /// Service for transfer responsibility from controllers
+        /// to request or notification handlers.
+        /// </summary>
         private readonly IMediator _mediator;
 
+        /// <summary>
+        /// Project of user identified by route.
+        /// </summary>
         private Project _project;
 
         public ProjectController(IMediator mediator)
@@ -31,11 +43,17 @@ namespace DocParty.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// Show project page. 
+        /// </summary>
+        /// <param name="route">User name and project name</param>
+        /// <returns> Project page.</returns>
         [RestoreModelStateFromTempData]
         [TypeFilter(typeof(ProjectAuthorizeFilter), 
             Arguments = new object[] { new Role.Value[] {Role.Value.Creator,Role.Value.Author} })]
         public async Task<IActionResult> Show([FromRoute] ProjectRoute route)
         {
+            //Getting field _project based on route.
             await Init(route);
 
             var request = new HandlerData<Project, Dictionary<ProjectSnapshotsTableRow,IEnumerable<string>>>
@@ -46,10 +64,12 @@ namespace DocParty.Controllers
             Dictionary<ProjectSnapshotsTableRow,IEnumerable<string>> dataAndComments = await _mediator.Send(request);
 
             string [] snapshotNames = dataAndComments.Select(data => data.Key.Name).ToArray();
+            
             string [] snaspshotReferences = dataAndComments.Select(data =>
                 $"{HttpContext.Request.Path}/{data.Key.Name}")
                 .ToArray(); 
 
+            // Creation table for project snapshots.
             var table = new ReferencedTable(
                 new NumberedTable(new ObjectTable<ProjectSnapshotsTableRow>(dataAndComments
                     .Select(data => data.Key).ToArray())),
@@ -78,6 +98,10 @@ namespace DocParty.Controllers
             });
         }
 
+        /// <summary>
+        /// Initialize field _project.
+        /// </summary>
+        /// <param name="route">User name and project name</param>
         private async Task Init(ProjectRoute route)
         {
             
@@ -88,7 +112,12 @@ namespace DocParty.Controllers
 
             _project = await _mediator.Send(request);
         }
-
+        /// <summary>
+        /// Adding new project snapshot.
+        /// </summary>
+        /// <param name="formData">Snapshot name, description and file.</param>
+        /// <param name="route">User name and project name.</param>
+        /// <returns>Redirect to project page.</returns>
         [HttpPost]
         [SetTempDataModelState]
         [TypeFilter(typeof(ProjectAuthorizeFilter),
@@ -97,6 +126,7 @@ namespace DocParty.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Getting field _project based on route.
                 await Init(route);
 
                 var request = new ProjectHandlerData<(string UserName, SnapshotFormData FormData), ErrorResponce>
@@ -105,20 +135,28 @@ namespace DocParty.Controllers
                     Data = (User.Identity.Name, formData)
                 };
 
+                // Getting object that contain errors about login user data.
                 ErrorResponce responce = await _mediator.Send(request);
 
+                // Checking errors if exist then add them to modelstate.
                 ModelState.CheckErrors(responce);
             }
 
             return RedirectToAction(nameof(Show), route);
         }
 
+        /// <summary>
+        /// Deleting project.
+        /// </summary>
+        /// <param name="route">User name and project name</param>
+        /// <returns> Redirect to all user projects page.</returns>
         [HttpPost]
         [Route("deletion")]
         [TypeFilter(typeof(ProjectAuthorizeFilter),
             Arguments = new object[] { new Role.Value[] { Role.Value.Creator} })]
         public async Task<IActionResult> Delete([FromRoute] ProjectRoute route)
         {
+            //Getting field _project based on route.
             await Init(route);
 
             var request = new HandlerData<Project, ErrorResponce>
@@ -131,12 +169,18 @@ namespace DocParty.Controllers
             return RedirectToRoute("Projects", new { userName = route.UserName});
         }
 
+        /// <summary>
+        /// Open or close project.
+        /// </summary>
+        /// <param name="route">User name and project name.</param>
+        /// <returns>Redirect to project page.</returns>
         [HttpPost]
         [Route("state")]
         [TypeFilter(typeof(ProjectAuthorizeFilter),
             Arguments = new object[] { new Role.Value[] { Role.Value.Creator} })]
         public async Task<IActionResult> ChangeState([FromRoute] ProjectRoute route)
         {
+            //Getting field _project based on route.
             await Init(route);
 
             var request = new HandlerData<Project, Unit>
@@ -149,6 +193,13 @@ namespace DocParty.Controllers
             return RedirectToAction(nameof(Show), route);
         }
 
+        /// <summary>
+        /// Comment choosed project shapshot.
+        /// </summary>
+        /// <param name="formData">Snapshot name and text of comment.</param>
+        /// <param name="route">User name and project name.</param>
+        /// <returns>Redirect to project page.</returns>
+
         [HttpPost]
         [Route("comment")]
         [SetTempDataModelState]
@@ -158,6 +209,7 @@ namespace DocParty.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Getting field _project based on route.
                 await Init(route);
 
                 var request = new ProjectHandlerData<(string UserName, CommentFormData FormData), ErrorResponce>
@@ -166,8 +218,10 @@ namespace DocParty.Controllers
                     Project = _project,
                 };
 
+                // Getting object that contain errors about login user data.
                 ErrorResponce responce = await _mediator.Send(request);
 
+                // Checking errors if exist then add them to modelstate.
                 ModelState.CheckErrors(responce);
             }
             
