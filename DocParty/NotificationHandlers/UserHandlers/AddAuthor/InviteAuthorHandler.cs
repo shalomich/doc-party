@@ -24,6 +24,7 @@ namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
 
         public async Task Handle(UserHandlerData<AuthorAddingFormData> notification, CancellationToken cancellationToken)
         {
+            /*
             User user = await Context.Users
                 .Include(user => user.ProjectRoles)
                 .FirstOrDefaultAsync(user => user.Email == notification.Data.Email);
@@ -34,7 +35,7 @@ namespace DocParty.NotificationHandlers.UserHandlers.AddAuthor
                 var builder = new ProjectInviteBuilder("");
                 var creator = new EmailMessageCreator(builder);
                 await EmailSender.SendEmailAsync(notification.Data.Email, creator.Create());
-            }
+            }*/
         }
     }
 }
