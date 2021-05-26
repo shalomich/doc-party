@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DocParty.Extensions
 {
+    /// <summary>
+    /// Get all upper and lower case symbols of russian alphabet as one line .
+    /// </summary>
     public static class StringBuilderExtension
     {
         public static StringBuilder GetRussianSymbols(this StringBuilder builder)

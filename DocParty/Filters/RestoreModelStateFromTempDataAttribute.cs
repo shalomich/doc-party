@@ -10,6 +10,10 @@ using static Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary;
 
 namespace DocParty.Filters
 {
+    /// <summary>
+    /// Filter that get errors from tempdata after redirect.
+    /// Errors were be added by filter SetTempDataModelState.
+    /// </summary>
     public class RestoreModelStateFromTempDataAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
